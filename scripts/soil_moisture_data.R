@@ -58,3 +58,5 @@ for(i in smFiles){
   # THIS LOOP!
   soil_moisture <<- rbind(soil_moisture, smData)
 }
+
+write_csv(soil_moisture, file = "data/soil_moisture/2022_SM_ALLSITES.csv")
