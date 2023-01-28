@@ -87,7 +87,6 @@ Prep_CR21_File <- function(file){
   # 2022_190_IRGA_DRYAS_1.DAT
   # 2022_190_IRGA_DRYAS_2.DAT
   # 2022_190_IRGA_MEAD.DAT
-  # 2022_207_IRGA_DRYAS_002.DAT
 }
 
 for(i in list.files(path = here("data/IRGA_flux/data_logger_files"), 
