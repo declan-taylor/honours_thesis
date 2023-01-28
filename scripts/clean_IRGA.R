@@ -71,9 +71,10 @@ Prep_CR21_File <- function(file){
   # Creating the IRGA tibble in the global environment and assigning four empty 
   # columns to manual fill the appropriate information from lab notebooks. The
   # site is auto-filled from the file name.
-  site <- str_extract(i, "(?<= IRGA_)[A-Z]{4,5}")
+  SITE <- str_extract(i, "(?<=IRGA_)[A-Z]{4,5}")
+  
   IRGA <<- IRGA %>%
-    add_column("site" = NA,
+    add_column("site" = SITE,
                "plot" = NA,
                "treatment" = NA,
                "light" = NA) %>%
