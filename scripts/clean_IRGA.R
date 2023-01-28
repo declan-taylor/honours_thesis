@@ -77,6 +77,17 @@ Prep_CR21_File <- function(file){
                "light" = NA) %>%
     select(c(site:light,
              X1:X15))
+  
+  # If all the columns are correctly aligned, there will only be one value in 
+  # the DOY column. Generate a warning if the file is not correctly aligned.
+  if(length(unique(IRGA$DOY)) != 1){
+    warning(i, " is incorrectly aligned.")
+  }
+  # Note: the following files were modified for alignment:
+  # 2022_190_IRGA_DRYAS_1.DAT
+  # 2022_190_IRGA_DRYAS_2.DAT
+  # 2022_190_IRGA_MEAD.DAT
+  # 2022_207_IRGA_DRYAS_002.DAT
 }
 
 for(i in list.files(path = here("data/IRGA_flux/data_logger_files"), 
