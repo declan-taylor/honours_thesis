@@ -25,7 +25,7 @@ Prep_CR21_File <- function(file){
                      delim = ",",
                      col_names = FALSE) %>%
     mutate(row_number = row_number())
-  
+
   # Subsetting the even lines of data
   IRGA_even <- IRGA %>%
     filter(FALSE == FSA::is.odd(IRGA$row_number)) %>%
@@ -79,7 +79,7 @@ Prep_CR21_File <- function(file){
                "treatment" = NA,
                "light" = NA) %>%
     select(c(site:light,
-             X1:X15))
+             year:T_air))
   
   # If all the columns are correctly aligned, there will only be one value in 
   # the DOY column. Generate a warning if the file is not correctly aligned.

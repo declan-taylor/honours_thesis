@@ -1,4 +1,4 @@
-﻿site,plot,treatment,light,year,DOY,hhmm,ss.s,battery_V,CO2_v,CO2_ppm,H2O_v,H2O_v,H2O_ppt,T_panel,T_air,T_soil
+﻿site,plot,treatment,light,year,DOY,hhmm,ss.s,battery_V,CO2_v,CO2_ppm,H2O_v,H2O_v,H2O_ppt,T_panel,T_soil,T_air
 MEAD,11,C,light,2022,182,1103,0,,,425.76,,,,,,
 MEAD,11,C,light,2022,182,1103,1,,,425,,,,,,
 MEAD,11,C,light,2022,182,1103,2,,,424.1,,,,,,

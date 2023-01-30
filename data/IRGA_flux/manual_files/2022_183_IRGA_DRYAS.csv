@@ -1,4 +1,4 @@
-﻿site,plot,treatment,light,year,DOY,hhmm,ss.s,battery_V,CO2_v,CO2_ppm,H2O_v,H2O_v,H2O_ppt,T_panel,T_air,T_soil
+﻿site,plot,treatment,light,year,DOY,hhmm,ss.s,battery_V,CO2_v,CO2_ppm,H2O_v,H2O_v,H2O_ppt,T_panel,T_soil,T_air
 DRYAS,11,C,light,2022,183,1346,0,,,414.66,,,,,,
 DRYAS,11,C,light,2022,183,1346,1,,,413.86,,,,,,
 DRYAS,11,C,light,2022,183,1346,2,,,413.17,,,,,,
