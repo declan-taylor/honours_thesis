@@ -6,17 +6,16 @@ library(ggplot2)
 library(viridis)
 
 # Create a dataframe for each combination of site and day by filtering for DOYs.
-# Add
 for(i in unique(asIRGA$DOY)){
-  doy <- as.character(i)
-  site <- asIRGA$site[1]
   oneDay <- filter(asIRGA, DOY == i) %>%
     filter(!is.na(light) | !is.na(treatment)) %>%
     # By grouping along variables that make each IRGA unique and adding a row 
     # number, we are essentially adding a 1Hz duration counter.
     group_by(plot, treatment, light) %>%
     mutate(duration = row_number())
-  
+ 
+  doy <- as.character(i)
+  site <- oneDay$site[1]
   # Plot IRGA-measured CO2 flux
   CO2plot <- ggplot(oneDay, aes(duration, CO2_ppm))+
     geom_point(aes(shape = factor(plot),
@@ -38,3 +37,20 @@ for(i in unique(asIRGA$DOY)){
   # Assign the figure with a site/date-specific name to the global environment.
   assign(paste(site, "_DOY", doy, sep = ""), CO2plot, envir = .GlobalEnv)
 }
+
+# Assemble final exploratory figures
+WILL <- WILL_DOY179 + WILL_DOY192 + patchwork::plot_layout()
+MEAD <- MEAD_DOY182 + MEAD_DOY195 + patchwork::plot_layout()
+DRYAS <- DRYAS_DOY183 + DRYAS_DOY196 + patchwork::plot_layout()
+
+# Save PNGs
+ggsave("WILL_flux.png", plot = WILL, device = "png", path = here("figures/exploratory"),
+       width = 3400, height = 1800, units = "px")
+ggsave("MEAD_flux.png", plot = MEAD, device = "png", path = here("figures/exploratory"),
+       width = 3400, height = 1800, units = "px")
+ggsave("DRYAS_flux.png", plot = DRYAS, device = "png", path = here("figures/exploratory"),
+       width = 3400, height = 1800, units = "px")
+
+
+# WIERDNESS:
+WILL_192 <- filter(asIRGA, plot == 14, DOY == 192, treatment == "T", light == "light")
