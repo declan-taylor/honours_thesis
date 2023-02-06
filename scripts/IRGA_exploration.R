@@ -39,9 +39,9 @@ for(i in unique(asIRGA$DOY)){
 }
 
 # Assemble final exploratory figures
-WILL <- WILL_DOY179 + WILL_DOY192 + patchwork::plot_layout()
-MEAD <- MEAD_DOY182 + MEAD_DOY195 + patchwork::plot_layout()
-DRYAS <- DRYAS_DOY183 + DRYAS_DOY196 + patchwork::plot_layout()
+WILL <- WILL_DOY179 + WILL_DOY192 + WILL_DOY197 + WILL_DOY208 + patchwork::plot_layout()
+MEAD <- MEAD_DOY182 + MEAD_DOY195 + MEAD_DOY206 + patchwork::plot_layout()
+DRYAS <- DRYAS_DOY183 + DRYAS_DOY196 + DRYAS_DOY207 + patchwork::plot_layout()
 
 # Save PNGs
 ggsave("WILL_flux.png", plot = WILL, device = "png", path = here("figures/exploratory"),
