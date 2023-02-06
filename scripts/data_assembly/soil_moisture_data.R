@@ -1,6 +1,10 @@
 # This script averages the three-per-plot readings for soil moisture and 
 # creates a long-data single sheet from all of the individual datasheets.
 
+# Manual edits: DOY208 data was incorrectly put under the "DRYAS" tab when SM
+# was done at WILL as part of NEE measurements. The DOY208 CSV was thus renamed,
+# and this script was re-run.
+
 library(tidyverse)
 library(here)
 
