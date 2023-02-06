@@ -54,7 +54,6 @@ for(i in unique(NEE$site)){
   oneSite <- NEE %>% filter(site == i)
   
   ggplot(oneSite, aes(DOY, flux_ppm_s))+
-    geom_line(aes(colour = factor(plot)))+
-    geom_point(aes(colour = factor(plot),
-                   shape = factor(plot)))
+    geom_line(aes(colour = factor(paste(plot, treatment))))+
+    geom_point(aes(colour = factor(paste(plot, treatment))))
 }
