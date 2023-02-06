@@ -1,29 +1,26 @@
 # To explore my initial IRGA data with Greg and look for trends.
-# Grid: facet by light and treatment, colour code by plot. One page per site per day
+# Run the master_dataframe.R script to create appropriate dfs accessed by these
+# ggplot scripts.
 
 library(tidyverse)
 library(ggplot2)
 library(viridis)
 
+# PART 1: flux data--------------------
 # Create a dataframe for each combination of site and day by filtering for DOYs.
 for(i in unique(asIRGA$DOY)){
-  oneDay <- filter(asIRGA, DOY == i) %>%
-    filter(!is.na(light) | !is.na(treatment)) %>%
-    # By grouping along variables that make each IRGA unique and adding a row 
-    # number, we are essentially adding a 1Hz duration counter.
-    group_by(plot, treatment, light) %>%
-    mutate(duration = row_number())
+  oneDay <- filter(asIRGA, DOY == i)
  
   doy <- as.character(i)
   site <- oneDay$site[1]
   # Plot IRGA-measured CO2 flux
   CO2plot <- ggplot(oneDay, aes(duration, CO2_ppm))+
-    geom_point(aes(shape = factor(plot),
-                   colour = factor(plot)),
+    geom_point(aes(shape = plot,
+                   colour = plot),
                alpha = 0.6)+
-    geom_smooth(aes(colour = factor(plot)),
+    geom_smooth(aes(colour = plot),
                 method = "lm", se = FALSE) +
-    scale_y_continuous(limits = c(370,  440))+
+   # scale_y_continuous(limits = min(oneDay$CO2_ppm), max(oneDay$CO2_ppm))+
     scale_colour_viridis_d() +
     facet_grid(treatment ~ light)+
     labs(title = paste(site, "_DOY", doy, sep = "")) +
@@ -39,18 +36,24 @@ for(i in unique(asIRGA$DOY)){
 }
 
 # Assemble final exploratory figures
-WILL <- WILL_DOY179 + WILL_DOY192 + patchwork::plot_layout()
-MEAD <- MEAD_DOY182 + MEAD_DOY195 + patchwork::plot_layout()
-DRYAS <- DRYAS_DOY183 + DRYAS_DOY196 + patchwork::plot_layout()
+WILL <- WILL_DOY179 + WILL_DOY192 + WILL_DOY197 + WILL_DOY208 + patchwork::plot_layout()
+MEAD <- MEAD_DOY182 + MEAD_DOY195 + MEAD_DOY206 + patchwork::plot_layout()
+DRYAS <- DRYAS_DOY183 + DRYAS_DOY196 + DRYAS_DOY207 + patchwork::plot_layout()
 
 # Save PNGs
 ggsave("WILL_flux.png", plot = WILL, device = "png", path = here("figures/exploratory"),
-       width = 3400, height = 1800, units = "px")
+       width = 3800, height = 2800, units = "px")
 ggsave("MEAD_flux.png", plot = MEAD, device = "png", path = here("figures/exploratory"),
-       width = 3400, height = 1800, units = "px")
+       width = 4400, height = 1800, units = "px")
 ggsave("DRYAS_flux.png", plot = DRYAS, device = "png", path = here("figures/exploratory"),
-       width = 3400, height = 1800, units = "px")
+       width = 4400, height = 1800, units = "px")
 
-
-# WIERDNESS:
-WILL_192 <- filter(asIRGA, plot == 14, DOY == 192, treatment == "T", light == "light")
+# PART 2: NEE Data--------------------
+# Some quick plots of flux slopes against DOY
+for(i in unique(NEE$site)){
+  oneSite <- NEE %>% filter(site == i)
+  
+  ggplot(oneSite, aes(DOY, flux_ppm_s))+
+    geom_line(aes(colour = factor(paste(plot, treatment))))+
+    geom_point(aes(colour = factor(paste(plot, treatment))))
+}
