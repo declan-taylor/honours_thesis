@@ -9,7 +9,7 @@ library(tidyverse)
 library(here)
 
 # List the files we will run this script over.
-smFiles <- list.files(path = here("data/soil_moisture"),
+smFiles <- list.files(path = here("data/soil_moisture/extracted_CSVs"),
                       pattern = ".csv")
 
 # A useful little function for data processing down below.
@@ -33,7 +33,7 @@ for(i in smFiles){
   site <- str_extract(i, "(?<=SM_)[A-Z]{3,5}(?=\\.csv)")
   
   # Load the data and average/reformat it.
-  smData <- read_csv(paste0("data/soil_moisture/", i)) %>%
+  smData <- read_csv(paste0("data/soil_moisture/extracted_CSVs/", i)) %>%
     # Drop unused columns
     select(where(not_all_na)) %>%
     # Make the north centre south columns consistently named.
