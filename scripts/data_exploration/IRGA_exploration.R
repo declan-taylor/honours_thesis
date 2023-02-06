@@ -1,10 +1,12 @@
 # To explore my initial IRGA data with Greg and look for trends.
-# Grid: facet by light and treatment, colour code by plot. One page per site per day
+# Run the master_dataframe.R script to create appropriate dfs accessed by these
+# ggplot scripts.
 
 library(tidyverse)
 library(ggplot2)
 library(viridis)
 
+# PART 1: flux data--------------------
 # Create a dataframe for each combination of site and day by filtering for DOYs.
 for(i in unique(asIRGA$DOY)){
   oneDay <- filter(asIRGA, DOY == i)
@@ -13,10 +15,10 @@ for(i in unique(asIRGA$DOY)){
   site <- oneDay$site[1]
   # Plot IRGA-measured CO2 flux
   CO2plot <- ggplot(oneDay, aes(duration, CO2_ppm))+
-    geom_point(aes(shape = factor(plot),
-                   colour = factor(plot)),
+    geom_point(aes(shape = plot,
+                   colour = plot),
                alpha = 0.6)+
-    geom_smooth(aes(colour = factor(plot)),
+    geom_smooth(aes(colour = plot),
                 method = "lm", se = FALSE) +
    # scale_y_continuous(limits = min(oneDay$CO2_ppm), max(oneDay$CO2_ppm))+
     scale_colour_viridis_d() +
@@ -45,3 +47,14 @@ ggsave("MEAD_flux.png", plot = MEAD, device = "png", path = here("figures/explor
        width = 4400, height = 1800, units = "px")
 ggsave("DRYAS_flux.png", plot = DRYAS, device = "png", path = here("figures/exploratory"),
        width = 4400, height = 1800, units = "px")
+
+# PART 2: NEE Data--------------------
+# Some quick plots of flux slopes against DOY
+for(i in unique(NEE$site)){
+  oneSite <- NEE %>% filter(site == i)
+  
+  ggplot(oneSite, aes(DOY, flux_ppm_s))+
+    geom_line(aes(colour = factor(plot)))+
+    geom_point(aes(colour = factor(plot),
+                   shape = factor(plot)))
+}
