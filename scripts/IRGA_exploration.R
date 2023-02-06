@@ -7,12 +7,7 @@ library(viridis)
 
 # Create a dataframe for each combination of site and day by filtering for DOYs.
 for(i in unique(asIRGA$DOY)){
-  oneDay <- filter(asIRGA, DOY == i) %>%
-    filter(!is.na(light) | !is.na(treatment)) %>%
-    # By grouping along variables that make each IRGA unique and adding a row 
-    # number, we are essentially adding a 1Hz duration counter.
-    group_by(plot, treatment, light) %>%
-    mutate(duration = row_number())
+  oneDay <- filter(asIRGA, DOY == i)
  
   doy <- as.character(i)
   site <- oneDay$site[1]
@@ -23,7 +18,7 @@ for(i in unique(asIRGA$DOY)){
                alpha = 0.6)+
     geom_smooth(aes(colour = factor(plot)),
                 method = "lm", se = FALSE) +
-    scale_y_continuous(limits = c(370,  440))+
+   # scale_y_continuous(limits = min(oneDay$CO2_ppm), max(oneDay$CO2_ppm))+
     scale_colour_viridis_d() +
     facet_grid(treatment ~ light)+
     labs(title = paste(site, "_DOY", doy, sep = "")) +
@@ -45,12 +40,8 @@ DRYAS <- DRYAS_DOY183 + DRYAS_DOY196 + DRYAS_DOY207 + patchwork::plot_layout()
 
 # Save PNGs
 ggsave("WILL_flux.png", plot = WILL, device = "png", path = here("figures/exploratory"),
-       width = 3400, height = 1800, units = "px")
+       width = 3800, height = 2800, units = "px")
 ggsave("MEAD_flux.png", plot = MEAD, device = "png", path = here("figures/exploratory"),
-       width = 3400, height = 1800, units = "px")
+       width = 4400, height = 1800, units = "px")
 ggsave("DRYAS_flux.png", plot = DRYAS, device = "png", path = here("figures/exploratory"),
-       width = 3400, height = 1800, units = "px")
-
-
-# WIERDNESS:
-WILL_192 <- filter(asIRGA, plot == 14, DOY == 192, treatment == "T", light == "light")
+       width = 4400, height = 1800, units = "px")
