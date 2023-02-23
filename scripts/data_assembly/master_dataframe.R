@@ -50,12 +50,22 @@ soil_moisture <- soil_moisture %>%
   filter(plot > 10) %>%
   mutate(plot = as.factor(plot))
 
+asIRGA <- left_join(asIRGA, soil_moisture,
+                    by = c("doy", "site", "plot", "treatment", "year"),
+                    keep = FALSE)
+
 addT("air") # Creates a dataframe called air_temp
 addT("soil") # Creates a dataframe called soil_temp
 
-left_join(asIRGA, soil_moisture, air_temp, soil_temp,
-          by = c("doy", "site", "plot", "treatment"),
-          keep = FALSE)
+fullTemp <- as_tibble(full_join(soil_temp, air_temp,
+                            by = c("doy", "site", "plot", "treatment", "datetime"),
+                            keep = FALSE))
+
+asIRGA <- left_join(asIRGA, fullTemp,
+                    by = c("doy", "site", "plot", "treatment", "datetime"),
+                    keep = FALSE)
+
+
 
 # STEP THREE: calculate NEE--------------------
 # The NEE calculations depend on a complicated unit conversion from ppm/s to 

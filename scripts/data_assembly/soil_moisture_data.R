@@ -40,7 +40,6 @@ for(i in smFiles){
     rename_with(~ str_replace_all(.x, "North.*$", "north")) %>%
     rename_with(~ str_replace_all(.x, "Center.*$", "centre")) %>%
     rename_with(~ str_replace_all(.x, "South.*$", "south")) %>%
-    rename(plot = "Plot") %>%
     # Separate the "CO2" from the treatment column value in CO2 plots
     separate("OTC/Cntr", 
              c("CO2", "treatment"),
@@ -51,6 +50,7 @@ for(i in smFiles){
     mutate(year = year,
            site = site,
            doy = doy,
+           plot = Plot,
            # Average the three soil moisture readings
            soil_moisture = (as.numeric(north) + as.numeric(centre) + as.numeric(south))/3,
            .before = "CO2") %>%

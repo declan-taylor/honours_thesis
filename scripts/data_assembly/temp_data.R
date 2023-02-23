@@ -20,8 +20,8 @@ addT <- function(dataType){
       rename_all(~gsub("temp.*", paste0(dataType, "_temp_C"), .x)) %>%
       # Add columns that contain site, treatment, and plot number info on each row.
       add_column("site" = str_extract(i, "[A-z]{3,5}(?=\\_)"),
-                 "treatment" = str_extract(i, "[0-9]{1,2}(?=[A-z])"),
-                 "plot" = str_extract(i, "(?<=[0-9]{1,2})[A-z]"), .name_repair = unique) %>%
+                 "plot" = as.factor(str_extract(i, "[0-9]{1,2}(?=[A-z])")),
+                 "treatment" = str_extract(i, "(?<=[0-9]{1,2})[A-z]"), .name_repair = unique) %>%
       # Correct time data and generate a DOY column
       mutate(datetime = mdy_hms(datetime,
                                 tz = "Canada/Central"),
