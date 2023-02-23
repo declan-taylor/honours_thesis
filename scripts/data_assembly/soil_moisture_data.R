@@ -20,7 +20,7 @@ soil_moisture <- tibble(site = character(),
                         plot = numeric(),
                         treatment = character(),
                         year = numeric(),
-                        DOY = numeric(),
+                        doy = numeric(),
                         soil_moisture = numeric())
 
 # for loop to organize the soil moisture data and extract relevant date/plot
@@ -49,18 +49,23 @@ for(i in smFiles){
              fill = "left") %>%
     # Add in data gathered from the filename.
     mutate(year = year,
-           DOY = doy,
            site = site,
+           doy = doy,
            # Average the three soil moisture readings
            soil_moisture = (as.numeric(north) + as.numeric(centre) + as.numeric(south))/3,
            .before = "CO2") %>%
     # Drop irrelevant columns.
-    select(c("site", "plot", "treatment", "year", "DOY", "soil_moisture"))
+    select(c("site", "plot", "treatment", "year", "doy", "soil_moisture"))
   
   # Append the reformated soil moisture data to the (originally blank) tibble
   # created before this for loop is run. ENSURE TIBBLE IS BLANK BEFORE RUNNING
   # THIS LOOP!
   soil_moisture <<- rbind(soil_moisture, smData)
-}
+} 
 
-write_csv(soil_moisture, file = "data/soil_moisture/2022_SM_ALLSITES.csv")
+
+# Remove the unnecessary objects from global environment.
+rm(smFiles, smData, not_all_na, doy, i , site, year)
+
+# Optional: write the soil moisture data to the data directory.
+# write_csv(soil_moisture, file = "data/soil_moisture/2022_SM_ALLSITES.csv")
