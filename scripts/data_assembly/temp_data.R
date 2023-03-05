@@ -38,21 +38,22 @@ addT <- function(dataType){
              doy = yday(datetime),
              hour = hour(datetime)) %>%
       # Name temperature based on dataType and select appropriate columns
-      rename_all(~gsub("temp.*", paste0(dataType, "_temp_C"), .x)) %>%
-      select(site, plot, treatment, datetime, doy, hour, paste0(dataType, "_temp_C"))
+      select(site, plot, treatment, datetime, doy, hour, temp_C)
     
     # A daily average temperature will be used to plot and explore seasonal 
     # temperature change between plots, sites, etc.
     assign(paste0(dataType, "_dailyAvg_T"),
            rbind(get(paste0(dataType, "_dailyAvg_T"),
                      env = .GlobalEnv),
-           # Summarizing the temperature data.
-           temp_i %>%
-             group_by(site, plot, treatment, doy) %>%
-             summarise(dailyAvg_T = mean(get(paste0(dataType, "_temp_C")))) %>%
-             ungroup()),
+                 # Summarizing the temperature data.
+                 temp_i %>%
+                   group_by(site, plot, treatment, doy) %>%
+                   summarise(dailyAvg_T = mean(temp_C)) %>%
+                   # Adding datatype to column name
+                   rename_all(~gsub("dailyAvg_T", paste0(dataType, "_dailyAvg_T"), .x)) %>%
+                   ungroup()),
            env = .GlobalEnv)
-   
+    
     # A *daytime* average temperature will be used to fill in missing IRGA temperature probe data. 
     # Append the next CSV's data to the big dataframe and assign it to the global environment.
     
@@ -65,7 +66,8 @@ addT <- function(dataType){
                  temp_i %>%
                    group_by(site, plot, treatment, doy) %>%
                    filter(hour >= 10 & hour <= 16) %>%
-                   summarise(daytimeT = mean(get(paste0(dataType, "_temp_C")))) %>%
+                   summarise(daytimeT = mean(temp_C)) %>%
+                   rename_all(~gsub("daytimeT", paste0(dataType, "_daytimeT"), .x)) %>%
                    ungroup()),
            env = .GlobalEnv)
   }
