@@ -44,7 +44,7 @@ asIRGA <- list.files(here("data/IRGA_flux/assembled_files"), full.names = TRUE) 
   # Reorder columns.
   select(c("site", "plot", "treatment", "light", "year", "doy", "datetime", "time", "duration", "battery_V", "CO2_ppm", "H2O_ppt", "T_panel", "T_soil", "T_air"))
 
-# STEP TWO: add in other data--------------------
+# STEP TWO: add in data--------------------
 # Soil moisture data
 soil_moisture <- soil_moisture %>%
   filter(plot > 10) %>%
@@ -54,20 +54,43 @@ asIRGA <- left_join(asIRGA, soil_moisture,
                     by = c("doy", "site", "plot", "treatment", "year"),
                     keep = FALSE)
 
+
+# STEP THREE: add in TEMPERATURE data--------------------
+## DOY 179, 182, 183 all are NAs from manual data entry. 192 and 195 are bad 
+## data. WILLDOY208 12T (dark) is an outlier.
+
 addT("air") # Creates a dataframe called air_temp
 addT("soil") # Creates a dataframe called soil_temp
 
 fullTemp <- as_tibble(full_join(soil_temp, air_temp,
-                            by = c("doy", "site", "plot", "treatment", "datetime"),
+                            by = c("doy", "site", "plot", "treatment"),
                             keep = FALSE))
 
 asIRGA <- left_join(asIRGA, fullTemp,
-                    by = c("doy", "site", "plot", "treatment", "datetime"),
+                    by = c("doy", "site", "plot", "treatment"),
                     keep = FALSE)
 
+# the case_when() function selectivley overwrites T_soil with the HOBO 
+# temperature averages in situations where the temperature probes are not 
+# working properly/at all.
+asIRGA <- asIRGA %>%
+  mutate(T_soil = case_when(doy == 192 | doy == 195 ~ soil_daytimeT,
+                            is.na(T_soil) == TRUE ~ soil_daytimeT,
+                            site == "WILL" & doy == 208 & plot == 12 & treatment == "T" & light == "dark" ~ soil_daytimeT,
+                            TRUE ~ T_soil),
+         # Repeate the process identically for air temperature.
+         T_air = case_when(doy == 192 | doy == 195 ~ air_daytimeT,
+                            is.na(T_air) == TRUE ~ air_daytimeT,
+                            site == "WILL" & doy == 208 & plot == 12 & treatment == "T" & light == "dark" ~ air_daytimeT,
+                            TRUE ~ T_air)) %>%
+  # MEAD 11 C IS MISSING HOBO AND IRGA TEMPERATURE DATA!
+  #filter(is.na(T_soil) == TRUE) %>%
+  #distinct(doy)
+  select(-c(soil_daytimeT, air_daytimeT))
 
+rm(air_temp, soil_temp, fullTemp) # keeping the global environment clean.
 
-# STEP THREE: calculate NEE--------------------
+# STEP FOUR: calculate NEE--------------------
 # The NEE calculations depend on a complicated unit conversion from ppm/s to 
 # umol/(s*m^2). This function does that.
 fluxConvert <- function(flux, temp){
@@ -81,7 +104,12 @@ fluxConvert <- function(flux, temp){
 }
 
 fluxData <- asIRGA %>%
-  summarise(flux_ppm_s = lm(CO2_ppm ~ time)$coefficients['time']) %>%
+  # asIRGA still grouped by site, plot, treatment, light, DOY from STEP ONE.
+  summarise(flux_ppm_s = lm(CO2_ppm ~ time)$coefficients['time'],
+            # LEAVING OFF: WHAT TO DO WITH TEMP AND H20!?!?
+            T_) 
+
+#%>%
   ungroup() %>%
   mutate(flux_umol_s_m2 = fluxConvert(flux_ppm_s, T_air))
 
