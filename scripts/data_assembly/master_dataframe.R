@@ -59,8 +59,8 @@ asIRGA <- left_join(asIRGA, soil_moisture,
 ## DOY 179, 182, 183 all are NAs from manual data entry. 192 and 195 are bad 
 ## data. WILLDOY208 12T (dark) is an outlier.
 
-addT("air") # Creates a dataframe called air_temp
-addT("soil") # Creates a dataframe called soil_temp
+addT("air", "daytime") # Creates a dataframe called air_temp
+addT("soil", "daytime") # Creates a dataframe called soil_temp
 
 fullTemp <- as_tibble(full_join(soil_temp, air_temp,
                             by = c("doy", "site", "plot", "treatment"),
