@@ -8,7 +8,7 @@ library(lubridate)
 library(tidyverse)
 library(here)
 
-# STEP ONE--------------------
+# STEP ONE: Load IRGA data--------------------
 asIRGA <- list.files(here("data/IRGA_flux/assembled_files"), full.names = TRUE) %>%
   lapply(read_csv) %>%
   bind_rows %>%
@@ -44,11 +44,17 @@ asIRGA <- list.files(here("data/IRGA_flux/assembled_files"), full.names = TRUE) 
   # Reorder columns.
   select(c("site", "plot", "treatment", "light", "year", "doy", "datetime", "time", "duration", "battery_V", "CO2_ppm", "H2O_ppt", "T_panel", "T_soil", "T_air"))
 
-# STEP TWO: add in data--------------------
+# STEP TWO: add in SM and greenness data--------------------
 # Soil moisture data
+source(here("scripts/data_assembly/soil_moisture_data.R"))
 soil_moisture <- soil_moisture %>%
   filter(plot > 10) %>%
-  mutate(plot = as.factor(plot))
+  mutate(plot = as.factor(plot)) %>%
+  # We are missing soil moisture data from DRYAS DOY183; DOY182 is substituted.
+  # DRYAS DOY182 data is not used elsewhere so the DOY is directly altered in 
+  # the dataframe.
+  mutate(doy = case_when(doy == 182 & site == "DRYAS" ~ 183,
+                         TRUE ~ doy))
 
 asIRGA <- left_join(asIRGA, soil_moisture,
                     by = c("doy", "site", "plot", "treatment", "year"),
@@ -58,7 +64,7 @@ asIRGA <- left_join(asIRGA, soil_moisture,
 # STEP THREE: add in TEMPERATURE data--------------------
 ## DOY 179, 182, 183 all are NAs from manual data entry. 192 and 195 are bad 
 ## data. WILLDOY208 12T (dark) is an outlier.
-
+source(here("scripts/data_assembly/temp_data.R"))
 addT("air", "daytime") # Creates a dataframe called air_temp
 addT("soil", "daytime") # Creates a dataframe called soil_temp
 
@@ -90,29 +96,24 @@ asIRGA <- asIRGA %>%
 
 rm(air_temp, soil_temp, fullTemp) # keeping the global environment clean.
 
-# STEP FOUR: calculate NEE--------------------
-# The NEE calculations depend on a complicated unit conversion from ppm/s to 
-# umol/(s*m^2). This function does that.
-fluxConvert <- function(flux, temp){
-  # Properties of atmosphere and IRGA chamber.
-  A <- 0.5476 # m^2 ???????????????????????????????
-  V <- 0.169756 # m^3
-  P <- 1000 # kPa
-  R <- 8.314 # kJ/mol*K
-  # Convert using the equation n = (PV/R)*(1/T+273.15)
-  print(flux * (P*V/R)*(1/(temp + 273.15)) * 1/A)
-}
 
+View(fluxData %>% filter(is.na(H2O_ppt) == TRUE))
+
+# STEP FOUR: calculate NEE--------------------
+source(here("scripts/data_assembly/flux_conversion.R"))
 fluxData <- asIRGA %>%
   # asIRGA still grouped by site, plot, treatment, light, DOY from STEP ONE.
   summarise(flux_ppm_s = lm(CO2_ppm ~ time)$coefficients['time'],
+            flux_sd = sd(CO2_ppm),
             # LEAVING OFF: WHAT TO DO WITH TEMP AND H20!?!?
-            T_) 
-
-#%>%
+            T_air = mean(T_air),
+            T_soil = mean(T_soil),
+            H2O_ppt = mean(H2O_ppt),
+            soil_moisture = mean(soil_moisture)) %>%
   ungroup() %>%
   mutate(flux_umol_s_m2 = fluxConvert(flux_ppm_s, T_air))
 
-NEE <- 
+NEE <- fluxData %>%
+  
 # Soil temperature data
 

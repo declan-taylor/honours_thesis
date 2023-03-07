@@ -48,6 +48,4 @@ bySeason <- bySite %>%
 
 descdist(air_bySite$air_temp) # Mayhaps beta or uniform distr?
 
-gamma_test(air_bySite$air_temp) #p = 0.08697!
-
 lm(air_temp ~ site + treatment, data = air_bySite)
