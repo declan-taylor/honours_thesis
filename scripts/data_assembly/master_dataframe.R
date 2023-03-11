@@ -46,9 +46,10 @@ asIRGA <- list.files(here("data/IRGA_flux/assembled_files"), full.names = TRUE) 
 
 # STEP TWO: add in SM and greenness data--------------------
 # Soil moisture data
-source(here("scripts/data_assembly/soil_moisture_data.R"))
+source(here("scripts/data_assembly/soil_moisture_data.R")) # cleans and loads the data
+
 soil_moisture <- soil_moisture %>%
-  filter(plot > 10) %>%
+  filter(plot > 10) %>% # Removing the plots not used in CO2 measurements
   mutate(plot = as.factor(plot)) %>%
   # We are missing soil moisture data from DRYAS DOY183; DOY182 is substituted.
   # DRYAS DOY182 data is not used elsewhere so the DOY is directly altered in 
@@ -76,7 +77,7 @@ asIRGA <- left_join(asIRGA, fullTemp,
                     by = c("doy", "site", "plot", "treatment"),
                     keep = FALSE)
 
-# the case_when() function selectivley overwrites T_soil with the HOBO 
+# the case_when() function selectively overwrites T_soil with the HOBO 
 # temperature averages in situations where the temperature probes are not 
 # working properly/at all.
 asIRGA <- asIRGA %>%
@@ -89,15 +90,9 @@ asIRGA <- asIRGA %>%
                             is.na(T_air) == TRUE ~ air_daytimeT,
                             site == "WILL" & doy == 208 & plot == 12 & treatment == "T" & light == "dark" ~ air_daytimeT,
                             TRUE ~ T_air)) %>%
-  # MEAD 11 C IS MISSING HOBO AND IRGA TEMPERATURE DATA!
-  #filter(is.na(T_soil) == TRUE) %>%
-  #distinct(doy)
   select(-c(soil_daytimeT, air_daytimeT))
 
-rm(air_temp, soil_temp, fullTemp) # keeping the global environment clean.
-
-
-View(fluxData %>% filter(is.na(H2O_ppt) == TRUE))
+rm(air_temp, soil_temp, fullTemp, soil_moisture) # keeping the global environment clean.
 
 # STEP FOUR: calculate NEE--------------------
 source(here("scripts/data_assembly/flux_conversion.R"))
@@ -113,7 +108,22 @@ fluxData <- asIRGA %>%
   ungroup() %>%
   mutate(flux_umol_s_m2 = fluxConvert(flux_ppm_s, T_air))
 
+# Separate the light readings
 NEE <- fluxData %>%
-  
-# Soil temperature data
+  filter(light == "light") %>%
+  rename(NEE_umol_s_m2 = flux_umol_s_m2) %>%
+  select (site, plot, treatment, doy, T_air, T_soil, H2O_ppt, soil_moisture, NEE_umol_s_m2)
 
+ER <- fluxData %>%
+  filter(light == "dark") %>%
+  rename(ER_umol_s_m2 = flux_umol_s_m2) %>%
+  select (site, plot, treatment, doy, ER_umol_s_m2, T_air, T_soil, H2O_ppt, soil_moisture)
+
+# We missed DRYAS 13C dark DOY 207 when the wires broke in a cloud of mosquitos.
+# Also removed from NEE here so that NEE and ER are the same size.
+GEP <- NEE %>%
+  filter(!(site == "DRYAS" & plot == 13 & treatment == "C" & doy == 207)) %>%
+  left_join(select(ER, -c("T_air", "T_soil", "H2O_ppt")), 
+            by = c("site", "plot", "treatment", "doy", "soil_moisture"),
+                 keep = FALSE) %>%
+  mutate(GEP = NEE_umol_s_m2 + ER_umol_s_m2)

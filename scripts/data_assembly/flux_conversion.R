@@ -7,5 +7,5 @@ fluxConvert <- function(flux, temp){
   P <- 1000 # kPa
   R <- 8.314 # kJ/mol*K
   # Convert using the equation n = (PV/R)*(1/T+273.15)
-  print(flux * (P*V/R)*(1/(temp + 273.15)) * 1/A)
+  print(-(flux * (P*V/R)*(1/(temp + 273.15)) * 1/A))
 }
