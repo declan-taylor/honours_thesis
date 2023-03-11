@@ -3,10 +3,15 @@
 # (organized by DOY and filter-able for SITE).
 # Step 2: add other environmental variables as additional rows. Those variables
 # are combined in their respective spreadsheets.
-
+library(conflicted)
 library(lubridate)
 library(tidyverse)
 library(here)
+
+# Set a preference for dplyr functions.
+conflicts_prefer(dplyr::filter(),
+                 dplyr::select(),
+                 dplyr::mutate())
 
 # STEP ONE: Load IRGA data--------------------
 asIRGA <- list.files(here("data/IRGA_flux/assembled_files"), full.names = TRUE) %>%
@@ -64,7 +69,7 @@ asIRGA <- left_join(asIRGA, soil_moisture,
 
 # STEP THREE: add in TEMPERATURE data--------------------
 ## DOY 179, 182, 183 all are NAs from manual data entry. 192 and 195 are bad 
-## data. WILLDOY208 12T (dark) is an outlier.
+## data. WILLDOY208 12T (dark) is an outlier. MEADDOY195 is missing.
 source(here("scripts/data_assembly/temp_data.R"))
 addT("air", "daytime") # Creates a dataframe called air_temp
 addT("soil", "daytime") # Creates a dataframe called soil_temp
@@ -75,7 +80,7 @@ fullTemp <- as_tibble(full_join(soil_temp, air_temp,
 
 asIRGA <- left_join(asIRGA, fullTemp,
                     by = c("doy", "site", "plot", "treatment"),
-                    keep = FALSE)
+                    keep = FALSE) %>%
 
 # the case_when() function selectively overwrites T_soil with the HOBO 
 # temperature averages in situations where the temperature probes are not 
@@ -90,7 +95,16 @@ asIRGA <- asIRGA %>%
                             is.na(T_air) == TRUE ~ air_daytimeT,
                             site == "WILL" & doy == 208 & plot == 12 & treatment == "T" & light == "dark" ~ air_daytimeT,
                             TRUE ~ T_air)) %>%
-  select(-c(soil_daytimeT, air_daytimeT))
+  # Filling the missing meadow data with no HOBO or IRGA: averaging hobo from 
+  # the surrounding sites on the same day.
+  mutate(DOY195MEAD = mean(soil_temp %>% 
+                             filter(site == "MEAD" & doy == 195 & treatment == "C") %>%
+                             pull(soil_daytimeT)),
+         T_soil = case_when(site == "MEAD" & doy == 195 & plot == 11 & treatment == "C" ~ mean(soil_temp %>% 
+                                                                                                 filter(site == "MEAD" & doy == 195 & treatment == "C") %>%
+                                                                                                 pull(soil_daytimeT)),
+                            TRUE ~ T_soil)) %>%
+  select(-c(soil_daytimeT, air_daytimeT, DOY195MEAD))
 
 rm(air_temp, soil_temp, fullTemp, soil_moisture) # keeping the global environment clean.
 
@@ -112,18 +126,18 @@ fluxData <- asIRGA %>%
 NEE <- fluxData %>%
   filter(light == "light") %>%
   rename(NEE_umol_s_m2 = flux_umol_s_m2) %>%
-  select (site, plot, treatment, doy, T_air, T_soil, H2O_ppt, soil_moisture, NEE_umol_s_m2)
+  select (site, plot, treatment, doy, T_air, T_soil, soil_moisture, NEE_umol_s_m2)
 
 ER <- fluxData %>%
   filter(light == "dark") %>%
   rename(ER_umol_s_m2 = flux_umol_s_m2) %>%
-  select (site, plot, treatment, doy, ER_umol_s_m2, T_air, T_soil, H2O_ppt, soil_moisture)
+  select(site, plot, treatment, doy, ER_umol_s_m2, T_air, T_soil, soil_moisture)
 
 # We missed DRYAS 13C dark DOY 207 when the wires broke in a cloud of mosquitos.
 # Also removed from NEE here so that NEE and ER are the same size.
 GEP <- NEE %>%
   filter(!(site == "DRYAS" & plot == 13 & treatment == "C" & doy == 207)) %>%
-  left_join(select(ER, -c("T_air", "T_soil", "H2O_ppt")), 
+  left_join(select(ER, -c("T_air", "T_soil")), 
             by = c("site", "plot", "treatment", "doy", "soil_moisture"),
                  keep = FALSE) %>%
-  mutate(GEP = NEE_umol_s_m2 + ER_umol_s_m2)
+  mutate(GEP_umol_s_m2 = NEE_umol_s_m2 + ER_umol_s_m2)
