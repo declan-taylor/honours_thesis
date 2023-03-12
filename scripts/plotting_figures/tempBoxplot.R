@@ -4,7 +4,7 @@ library(ggplot2)
 library(here)
 
 # Generating box plots to determine difference in temperature between sites.
-# Run `temp_data.R` before using this script.
+source(here("scripts/data_assembly/temp_data.R"))
 addT("air", "all") #creates air_dailyAvg_T
 addT("soil", "all") #creates soil_dailyAvg_T
 fullTemp <- as_tibble(full_join(air_dailyAvg_T, soil_dailyAvg_T,
@@ -21,8 +21,10 @@ soiltemp <- ggplot(data = fullTemp, aes(x = site,
              size = 0.7, alpha = 0.6)+
   xlab("Site")+
   ylab("Daily Average Soil Temperature (ºC)")+
-  scale_fill_discrete(labels=c("control (ambient)", "treatment (OTC)"))+
-  scale_colour_discrete(guide = "none")+
+  scale_fill_discrete(type=c("#89C5DA", "#DA5724"),
+                      labels=c("control (ambient)", "treatment (OTC)"))+
+  scale_colour_discrete(type=c("#89C5DA", "#DA5724"),
+                        guide = "none")+
   labs(fill = NULL)+
   theme_bw()+
   theme(panel.grid.major = element_blank(),
@@ -37,10 +39,12 @@ airtemp <- ggplot(data = fullTemp, aes(x = site,
              size = 0.7, alpha = 0.6)+
   xlab("Site")+
   ylab("Daily Average Air Temperature (ºC)")+
-  scale_fill_discrete(labels=c("control (ambient)", "treatment (OTC)"),
+  scale_fill_discrete(type=c("#89C5DA", "#DA5724"),
+                      labels=c("control (ambient)", "treatment (OTC)"),
                       # legend turned off so that boxplots can be adjacent.
                       guide = "none")+
-  scale_colour_discrete(guide = "none")+
+  scale_colour_discrete(type=c("#89C5DA", "#DA5724"),
+                        guide = "none")+
   labs(fill = NULL)+
   theme_bw()+
   theme(panel.grid.major = element_blank(),
