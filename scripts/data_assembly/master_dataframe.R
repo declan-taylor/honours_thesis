@@ -4,6 +4,7 @@
 # Step 2: add other environmental variables as additional rows. Those variables
 # are combined in their respective spreadsheets.
 library(conflicted)
+library(rgdal)
 library(lubridate)
 library(tidyverse)
 library(here)
@@ -66,6 +67,13 @@ asIRGA <- left_join(asIRGA, soil_moisture,
                     by = c("doy", "site", "plot", "treatment", "year"),
                     keep = FALSE)
 
+# Greenness data
+source(here("scripts/data_assembly/GEI.R"))
+generate_GEI(here("data/greenness/cropped_images"))
+
+asIRGA <- left_join(asIRGA, GEI,
+                    by = c("doy", "site", "plot", "treatment"),
+                    keep = FALSE)
 
 # STEP THREE: add in TEMPERATURE data--------------------
 ## DOY 179, 182, 183 all are NAs from manual data entry. 192 and 195 are bad 
@@ -106,7 +114,7 @@ asIRGA <- asIRGA %>%
                             TRUE ~ T_soil)) %>%
   select(-c(soil_daytimeT, air_daytimeT, DOY195MEAD))
 
-rm(air_temp, soil_temp, fullTemp, soil_moisture) # keeping the global environment clean.
+rm(air_temp, soil_temp, fullTemp, soil_moisture, GEI) # keeping the global environment clean.
 
 # STEP FOUR: calculate NEE--------------------
 source(here("scripts/data_assembly/flux_conversion.R"))
@@ -127,12 +135,12 @@ fluxData <- asIRGA %>%
 NEE <- fluxData %>%
   filter(light == "light") %>%
   rename(NEE_umol_s_m2 = flux_umol_s_m2) %>%
-  select (site, plot, treatment, doy, T_air, T_soil, soil_moisture, NEE_umol_s_m2)
+  select (site, plot, treatment, doy, T_air, T_soil, soil_moisture, GEI, NEE_umol_s_m2)
 
 ER <- fluxData %>%
   filter(light == "dark") %>%
   rename(ER_umol_s_m2 = flux_umol_s_m2) %>%
-  select(site, plot, treatment, doy, ER_umol_s_m2, T_air, T_soil, soil_moisture)
+  select(site, plot, treatment, doy, ER_umol_s_m2, T_air, T_soil, soil_moisture, GEI)
 
 # We missed DRYAS 13C dark DOY 207 when the wires broke in a cloud of mosquitos.
 # Also removed from NEE here so that NEE and ER are the same size.
@@ -142,3 +150,4 @@ GEP <- NEE %>%
             by = c("site", "plot", "treatment", "doy", "soil_moisture"),
                  keep = FALSE) %>%
   mutate(GEP_umol_s_m2 = NEE_umol_s_m2 + ER_umol_s_m2)
+
