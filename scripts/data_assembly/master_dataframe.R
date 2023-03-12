@@ -80,7 +80,7 @@ fullTemp <- as_tibble(full_join(soil_temp, air_temp,
 
 asIRGA <- left_join(asIRGA, fullTemp,
                     by = c("doy", "site", "plot", "treatment"),
-                    keep = FALSE) %>%
+                    keep = FALSE)
 
 # the case_when() function selectively overwrites T_soil with the HOBO 
 # temperature averages in situations where the temperature probes are not 
@@ -120,7 +120,8 @@ fluxData <- asIRGA %>%
             H2O_ppt = mean(H2O_ppt),
             soil_moisture = mean(soil_moisture)) %>%
   ungroup() %>%
-  mutate(flux_umol_s_m2 = fluxConvert(flux_ppm_s, T_air))
+  mutate(flux_umol_s_m2 = fluxConvert(flux_ppm_s, T_air),
+         treatment = as.factor(treatment))
 
 # Separate the light readings
 NEE <- fluxData %>%
