@@ -122,11 +122,11 @@ fluxData <- asIRGA %>%
   # asIRGA still grouped by site, plot, treatment, light, DOY from STEP ONE.
   summarise(flux_ppm_s = lm(CO2_ppm ~ time)$coefficients['time'],
             flux_sd = sd(CO2_ppm),
-            # LEAVING OFF: WHAT TO DO WITH TEMP AND H20!?!?
             T_air = mean(T_air),
             T_soil = mean(T_soil),
             H2O_ppt = mean(H2O_ppt),
-            soil_moisture = mean(soil_moisture)) %>%
+            soil_moisture = mean(soil_moisture),
+            GEI = mean (GEI)) %>%
   ungroup() %>%
   mutate(flux_umol_s_m2 = fluxConvert(flux_ppm_s, T_air),
          treatment = as.factor(treatment))
@@ -149,5 +149,6 @@ GEP <- NEE %>%
   left_join(select(ER, -c("T_air", "T_soil")), 
             by = c("site", "plot", "treatment", "doy", "soil_moisture"),
                  keep = FALSE) %>%
-  mutate(GEP_umol_s_m2 = NEE_umol_s_m2 + ER_umol_s_m2)
+  # NEE = GEP + ER (where ER is measured as a negative flux)
+  mutate(GEP_umol_s_m2 = NEE_umol_s_m2 - ER_umol_s_m2)
 
