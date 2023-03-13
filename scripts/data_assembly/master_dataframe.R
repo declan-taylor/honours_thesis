@@ -147,7 +147,7 @@ ER <- fluxData %>%
 GEP <- NEE %>%
   filter(!(site == "DRYAS" & plot == 13 & treatment == "C" & doy == 207)) %>%
   left_join(select(ER, -c("T_air", "T_soil")), 
-            by = c("site", "plot", "treatment", "doy", "soil_moisture"),
+            by = c("site", "plot", "treatment", "doy", "soil_moisture", "GEI"),
                  keep = FALSE) %>%
   # NEE = GEP + ER (where ER is measured as a negative flux)
   mutate(GEP_umol_s_m2 = NEE_umol_s_m2 - ER_umol_s_m2)
