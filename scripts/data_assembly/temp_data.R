@@ -1,16 +1,15 @@
-# Secondary function: the main function requires knowledge of averaging 
-# temperatures based on
-
-# MAIN FUNCTION
 # This function generates a single dataframe in the global environment for all
 # of the soil or temperature data, which can then be bound to the master
 # dataframe. The function gets called in the master_dataframe.R script.
 
-addT <- function(dataType){
+addT <- function(dataType, avg_interval){
   data <- here(paste0("data/", dataType, "_temperature"))
+  # omit the v2 files, these are the RH sensors.
   file_list <- list.files(path = data,
                           pattern = "csv",
                           recursive = FALSE)
+  # Remove the RH sensor data.
+  file_list <- file_list[FALSE == grepl("_v2.csv", file_list)]
   
   # NULL dataframe for all temp data
   assign(paste0(dataType, "_temp"), NULL,
@@ -29,8 +28,8 @@ addT <- function(dataType){
       rename_all(~gsub("temp.*", "temp_C", .x)) %>%
       mutate(temp_C = as.numeric(temp_C)) %>%
       # Add columns that contain site, treatment, and plot number info on each row.
-      add_column("site" = str_extract(i, "[A-z]{3,5}(?=\\_)"),
-                 "plot" = as.factor(str_extract(i, "[0-9]{1,2}(?=[A-z])")),
+      add_column("site" = str_extract(i, "[A-z]{4,5}(?=\\_)"),
+                 "plot" = as.factor(str_extract(i, "(?<=\\_)[0-9]{1,2}(?=[A-z])")),
                  "treatment" = str_extract(i, "(?<=[0-9]{1,2})[A-z]"), .name_repair = unique) %>%
       # Correct time data and generate a DOY column
       mutate(datetime = mdy_hms(datetime,
@@ -42,33 +41,33 @@ addT <- function(dataType){
     
     # A daily average temperature will be used to plot and explore seasonal 
     # temperature change between plots, sites, etc.
-    assign(paste0(dataType, "_dailyAvg_T"),
-           rbind(get(paste0(dataType, "_dailyAvg_T"),
-                     env = .GlobalEnv),
-                 # Summarizing the temperature data.
-                 temp_i %>%
-                   group_by(site, plot, treatment, doy) %>%
-                   summarise(dailyAvg_T = mean(temp_C)) %>%
-                   # Adding datatype to column name
-                   rename_all(~gsub("dailyAvg_T", paste0(dataType, "_dailyAvg_T"), .x)) %>%
-                   ungroup()),
-           env = .GlobalEnv)
-    
-    # A *daytime* average temperature will be used to fill in missing IRGA temperature probe data. 
-    # Append the next CSV's data to the big dataframe and assign it to the global environment.
-    
+    if(avg_interval == "all"){
+      assign(paste0(dataType, "_dailyAvg_T"),
+             rbind(get(paste0(dataType, "_dailyAvg_T"),
+                       env = .GlobalEnv),
+                   # Summarizing the temperature data.
+                   temp_i %>%
+                     group_by(site, plot, treatment, doy) %>%
+                     summarise(dailyAvg_T = mean(temp_C)) %>%
+                     # Adding datatype to column name
+                     rename_all(~gsub("dailyAvg_T", paste0(dataType, "_dailyAvg_T"), .x)) %>%
+                     ungroup()),
+             env = .GlobalEnv)
+    }
     
     # Generate a daytime average to sub in for missing T probe data.
-    assign(paste0(dataType, "_temp"),
-           rbind(get(paste0(dataType, "_temp"),
-                     env = .GlobalEnv), 
-                 # Summarise the temperature data only during daytime hours.
-                 temp_i %>%
-                   group_by(site, plot, treatment, doy) %>%
-                   filter(hour >= 10 & hour <= 16) %>%
-                   summarise(daytimeT = mean(temp_C)) %>%
-                   rename_all(~gsub("daytimeT", paste0(dataType, "_daytimeT"), .x)) %>%
-                   ungroup()),
-           env = .GlobalEnv)
+    if(avg_interval == "daytime"){
+      assign(paste0(dataType, "_temp"),
+             rbind(get(paste0(dataType, "_temp"),
+                       env = .GlobalEnv), 
+                   # Summarise the temperature data only during daytime hours.
+                   temp_i %>%
+                     group_by(site, plot, treatment, doy) %>%
+                     filter(hour >= 10 & hour <= 16) %>%
+                     summarise(daytimeT = mean(temp_C)) %>%
+                     rename_all(~gsub("daytimeT", paste0(dataType, "_daytimeT"), .x)) %>%
+                     ungroup()),
+             env = .GlobalEnv)
+    }
   }
 }

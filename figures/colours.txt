@@ -1,0 +1,22 @@
+COLOUR Palate:
+
+SITES (VIRIDIS)
+WILL = #1F968BFF
+MEAD = #FDE725FF
+DRYAS= #481567FF
+
+CTL = "#89C5DA", OTC = "#DA5724"
+
+RED/GREEN
+Green = #019875 "free speech aquamarine"
+Green = #596E5C "cactus"
+Green = #002408 "dark green
+Red = #BB293D "brick red"
+
+
+RED/BLUE
+#E63946 amaranth
+#F7A6A4 sundown
+#FAF3EE tutu
+#457B9D hippie blue
+#1D3557 regal blue
