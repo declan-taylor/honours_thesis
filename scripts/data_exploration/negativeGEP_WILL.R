@@ -33,10 +33,11 @@ WILL.GEPline <- ggplot(data = WILL.GEP,
        colour = NULL,
        linetype = NULL,
        x = "Day of Year",
-       y = bquote('Ecosystem Respiration (ER; ' *mu~'mol' ~CO[2]~ m^-2~s^-1*')'))+
+       y = bquote('Willow Site ER (' *mu~'mol' ~CO[2]~ m^-2~s^-1*')'))+
   theme_bw()+
   theme(panel.grid.major = element_blank(),
         panel.grid.minor = element_blank())
 
 ggsave("GEP_WILL.png", plot = WILL.GEPline,
+       width = 3000, height = 2000, units = "px",
        device = "png", path = here("figures/exploratory"))
