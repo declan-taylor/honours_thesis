@@ -32,7 +32,8 @@ NEE_line <- ggplot(data = NEE,
   #scale_fill_manual(values=c("#89C5DA", "#DA5724"),
   #                  guide = "none")+
   # Setting a common DOY range.
-  scale_x_continuous(limits = c(178, 210))+
+  scale_x_continuous(limits = c(178, 210),
+                     breaks = scales::extended_breaks(n = 8))+
   labs(fill = NULL,
        colour = NULL,
        linetype = NULL,
@@ -66,16 +67,20 @@ GEP_line <- ggplot(data = GEP,
              alpha = 0.7)+
   # Set colours, labels, etc.
   scale_colour_manual(values=c("#89C5DA", "#DA5724"),
-                      labels=c("ambient", "warmed (OTC)"))+
-  scale_linetype(labels=c("ambient", "warmed (OTC)"))+
+                      labels=c("ambient", "warmed (OTC)"),
+                      guide = "none")+
+  scale_linetype(labels=c("ambient", "warmed (OTC)"),
+                 guide = "none")+
   #scale_fill_manual(values=c("#89C5DA", "#DA5724"),
   #                  guide = "none")+
   # Setting a common DOY range.
-  scale_x_continuous(limits = c(178, 210))+
+  scale_x_continuous(limits = c(178, 210),
+                     breaks = scales::extended_breaks(n = 8),
+                     labels = NULL)+
   labs(fill = NULL,
        colour = NULL,
        linetype = NULL,
-       x = "Day of Year",
+       x = NULL,
        y = bquote('GEP(' *mu~'mol' ~CO[2]~ m^-2~s^-1*')'))+
   # Split into three for sites
   facet_wrap(~ site)+
@@ -105,18 +110,18 @@ ER_line <- ggplot(data = ER,
              alpha = 0.7)+
   # Set colours, labels, etc.
   scale_colour_manual(values=c("#89C5DA", "#DA5724"),
-                      labels=c("ambient", "warmed (OTC)"),
-                      guide = "none")+
-  scale_linetype(labels=c("ambient", "warmed (OTC)"),
-                 guide = "none")+
+                      labels=c("ambient", "warmed (OTC)"))+
+  scale_linetype(labels=c("ambient", "warmed (OTC)"))+
   #scale_fill_manual(values=c("#89C5DA", "#DA5724"),
   #                  guide = "none")+
   # Setting a common DOY range.
-  scale_x_continuous(limits = c(178, 210))+
+  scale_x_continuous(limits = c(178, 210),
+                     breaks = scales::extended_breaks(n = 8),
+                     labels = NULL)+
   labs(fill = NULL,
        colour = NULL,
        linetype = NULL,
-       x = "Day of Year",
+       x = NULL,
        y = bquote('ER(' *mu~'mol' ~CO[2]~ m^-2~s^-1*')'))+
   # Split into three for sites
   facet_wrap(~ site)+
