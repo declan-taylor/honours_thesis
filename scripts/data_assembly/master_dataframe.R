@@ -10,9 +10,11 @@ library(tidyverse)
 library(here)
 
 # Set a preference for dplyr functions.
-conflicts_prefer(dplyr::filter(),
-                 dplyr::select(),
-                 dplyr::mutate())
+conflicted::conflicts_prefer(dplyr::filter(),
+                             dplyr::select(),
+                             dplyr::mutate(),
+                             base::as.Date(),
+                             base::as.Date.numeric())
 
 # STEP ONE: Load IRGA data--------------------
 asIRGA <- list.files(here("data/IRGA_flux/assembled_files"), full.names = TRUE) %>%

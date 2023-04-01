@@ -90,8 +90,9 @@ airtempLine <- ggplot(data = fullTemp,
   geom_smooth(aes(colour = treatment,
                   fill = treatment,
                   linetype = treatment),
-              size = 1.1,
-              alpha = 0.5)+
+              method = "loess", span = 0.4,
+              size = 1,
+              alpha = 0.4)+
   facet_wrap(~ site)+ 
   scale_colour_manual(values=c("#89C5DA", "#DA5724"),
                       labels=c("ambient", "warmed (OTC)"))+
@@ -114,8 +115,9 @@ soiltempLine <- ggplot(data = fullTemp,
   geom_smooth(aes(colour = treatment,
                   fill = treatment,
                   linetype = treatment),
-              size = 1.1,
-              alpha = 0.5)+
+              method = "loess", span = 0.4,
+              size = 1,
+              alpha = 0.4)+
   facet_wrap(~ site,)+ 
   scale_colour_manual(values=c("#89C5DA", "#DA5724"),
                       labels=c("ambient", "warmed (OTC)"))+
