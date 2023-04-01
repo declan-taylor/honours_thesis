@@ -4,7 +4,7 @@ generate_GEI(here("data/greenness/cropped_images"))
 # Regression line
 lm_eqn <- function(df, x_var_flux_type){
   m <- lm(get(paste0(x_var_flux_type, "_umol_s_m2")) ~ GEI, df);
-  eq <- substitute(italic("GEP") == a + b %.% italic(GEI)*","~~italic(R)^2~"="~r2, 
+  eq <- substitute(italic(ER) == a + b %.% italic(GEI)*","~~italic(R)^2~"="~r2, 
                    list(a = format(unname(coef(m)[1]), digits = 2),
                         b = format(unname(coef(m)[2]), digits = 2),
                         r2 = format(summary(m)$r.squared, digits = 3)))
@@ -63,4 +63,5 @@ ggsave("regressionGEI_NEE.png", plot = GEI.NEE,
        device = "png", path = here("figures"))
 
 ggsave("GEI_regressions.png", plot = GEI.GEP + GEI.ER + GEI.NEE + patchwork::plot_layout(),
+       width = 5500, height = 3000, units = "px",
        device = "png", path = here("figures"))
