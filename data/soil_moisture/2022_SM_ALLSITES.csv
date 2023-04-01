@@ -1,4 +1,4 @@
-site,plot,treatment,year,DOY,soil_moisture
+site,plot,treatment,year,doy,soil_moisture
 DRYAS,1,T,2022,178,45
 DRYAS,1,Cp,2022,178,57
 DRYAS,1,Cc,2022,178,50
