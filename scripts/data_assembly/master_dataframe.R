@@ -129,7 +129,9 @@ fluxData <- asIRGA %>%
             GEI = mean (GEI)) %>%
   ungroup() %>%
   mutate(flux_umol_s_m2 = fluxConvert(flux_ppm_s, T_air),
-         treatment = as.factor(treatment))
+         treatment = as.factor(treatment),
+         site = as.factor(site),
+         plot = as.numeric(plot))
 
 # Separate the light readings
 NEE <- fluxData %>%

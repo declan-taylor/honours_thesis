@@ -1,11 +1,16 @@
 library(tidyverse)
+library(here)
 library(lubridate)
 library(lme4) # updated version of nlme.
-library(sjPlot)
-
-conflicts_prefer(lme4::lmList())
+library(lmerTest)
+library(conflicted)
+# Specify which package the stats should perfer.
+conflicts_prefer(lmerTest::lmList(),
+                 lmerTest::lmer())
 
 # Run `master_dataframe.R` first.
+# source(here("scripts/data_assembly/master_dataframe.R"))
+
 # 1. Checking the data ditribution-------------------------
 hist(NEE$NEE_umol_s_m2)
 hist(ER$ER_umol_s_m2)
@@ -27,19 +32,60 @@ bartlett.test(ER_umol_s_m2 ~ site, data = ER) #p = 0.006026
 bartlett.test(ER_umol_s_m2 ~ treatment, data = ER) #p = 0.6964
 
 # 2. Does long term warming affect NEE?-------------------------
-## If we proceed to model selection, REML should likely be set to FALSE.
-#
+## If we proceed to model selection, REML should likely be set to FALSE. Otherwise, true.
 # lme4: lmer(formula, data = <>. REML = ??), glmer(), nlmer().
 
-#NEE.mod <- 
-NEE.mod <- lmer(NEE_umol_s_m2 ~ treatment + (1|site:plot), data = NEE)
-ER.mod <- lmer(ER_umol_s_m2 ~ treatment + (1|site:plot), data = ER)
-GEP.mod <- lmer(GEP_umol_s_m2 ~ treatment + (1|site:plot), data = GEP)
+# BASIC MODEL (1): FLUX AND TREATMENT
+# First, set up a random effects structure.
+NEE.mod1 <- lmer(NEE_umol_s_m2 ~ treatment + (1|plot:site), data = NEE)
+# Estimating the effect of treatment accounting for the variation in flux 
+# (itself) across the 12 plots. The nested nature of plot:site means the model is 
+# looking at 12 factors (3 site * 4 plot).
 
+NEE.mod1 <- lmer(NEE_umol_s_m2 ~ treatment + (1|site/plot), data = NEE)
+summary(NEE.mod1)
+# Estimating the effect of treatment accounting for the variation in flux across 
+# sites, but ALSO the variation in `the effect of treatment on flux` across 
+# the 12 plot:site factors. THIS MODEL SELECTED.
 
-lme(NEE_umol_s_m2 ~ treatment, data = NEE)
+NEE.mod1 <- lmer(NEE_umol_s_m2 ~ treatment + (treatment|plot:site), data = NEE)
+# Estimating the effect of treatment accounting for the variation in flux across 
+# plots, but ALSO the variation in `the effect of treatment on flux` across 
+# sites. BOUNDARY (SINGLUAR) FIT.
 
-summary(NEE.mod)
+NEE.mod1 <- lmer(NEE_umol_s_m2 ~ treatment + (treatment|site/plot), data = NEE)
+# Estimating the effect of treatment accounting for the variation in flux across 
+# sites (1|site) and plots (1|site:plot), but ALSO the variation in `the effect 
+# of treatment on flux` across sites and plots. FILED TO CONVERGE.
 
-tab_model(NEE.mod, transform = NULL, show.df = TRUE)
+ER.mod1 <- lmer(ER_umol_s_m2 ~ treatment + (1|site/plot), data = ER)
+summary(ER.mod1) # Estimate treatmentT = -0.0029292, p = 0.00115 **
 
+GEP.mod1 <- lmer(GEP_umol_s_m2 ~ treatment + (1|site/plot), data = GEP)
+summary(GEP.mod1) # Estimate treatmentT = 0.008918, p = 0.0245*
+
+# 3. Test for differences between sites too.-------------------------
+NEE.mod2 <- lmer(NEE_umol_s_m2 ~ treatment + site + (1|site:plot), data = NEE) 
+summary(NEE.mod2)
+
+GEP.mod2 <- lmer(GEP_umol_s_m2 ~ treatment + site + (1|site:plot), data = GEP) 
+summary(GEP.mod2)
+
+ER.mod2 <- lmer(ER_umol_s_m2 ~ treatment + site + (1|site:plot), data = ER) 
+summary(ER.mod2)
+ 
+
+# 4. Do treatment, GEI, SM, T_air, T_soil affect NEE? ?-------------------------
+NEE.mod3 <- lmer(NEE_umol_s_m2 ~ treatment + GEI + soil_moisture + T_air + T_soil + (treatment|site) + (1|site/plot), data = NEE)
+# BOUNDARY IS SINGULAR
+
+NEE.mod3 <- lmer(NEE_umol_s_m2 ~ treatment + GEI + soil_moisture + T_air + (1|site:plot), data = NEE)
+summary(NEE.mod3) 
+
+GEP.mod3 <- lmer(GEP_umol_s_m2 ~ treatment + GEI + soil_moisture + T_air + T_soil + (1|site:plot), data = GEP)
+summary(GEP.mod3)
+
+ER.mod3 <- lmer(ER_umol_s_m2 ~ treatment + GEI + soil_moisture + T_air + T_soil + (1|site:plot), data = ER)
+summary(ER.mod3) 
+
+# "parameter estimate of the slope of the relationship"
