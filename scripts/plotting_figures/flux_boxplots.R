@@ -19,6 +19,22 @@ NEE.boxplot <- ggplot(data = NEE)+
   theme(panel.grid.major = element_blank(),
         panel.grid.minor = element_blank())
 
+ggplot(data = NEE)+
+  geom_col(aes(x = site,
+               y = mean(NEE_umol_s_m2),
+               fill = treatment),
+           position = position_dodge())+
+  geom_hline(yintercept = 0, linetype = 2, colour = "black", alpha = 1)+
+  #facet_wrap(~ site)+ 
+  scale_fill_discrete(type=c("white", "black"))+
+  #scale_x_discrete(labels=c("ambient", "warmed (OTC)"))+
+  labs(fill = NULL,
+       x = "Site",
+       y = bquote('Net Ecosystem Exchange (NEE; ' *mu~'mol' ~CO[2]~ m^-2~s^-1*')'))+
+  theme_bw()+
+  theme(panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank())
+
 GEP.boxplot <- ggplot(data = GEP) +
   geom_boxplot(aes(x = treatment,
                    y = GEP_umol_s_m2,
