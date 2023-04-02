@@ -19,6 +19,10 @@ addT <- function(dataType, avg_interval){
   assign(paste0(dataType, "_dailyAvg_T"), NULL,
          env = .GlobalEnv)
   
+  # NULL dataframe for daily average temp
+  assign(paste0(dataType, "_runningAvg_T"), NULL,
+         env = .GlobalEnv)
+  
   for(i in file_list){
     # Generate a tibble with the appropriate temperature data.
     temp_i <-  tundra::load_file(paste0(data, "/", i), sep = ",") %>%
@@ -37,7 +41,8 @@ addT <- function(dataType, avg_interval){
              doy = yday(datetime),
              hour = hour(datetime)) %>%
       # Name temperature based on dataType and select appropriate columns
-      select(site, plot, treatment, datetime, doy, hour, temp_C)
+      select(site, plot, treatment, datetime, doy, hour, temp_C) %>%
+      drop_na(temp_C)
     
     # A daily average temperature will be used to plot and explore seasonal 
     # temperature change between plots, sites, etc.
@@ -51,6 +56,20 @@ addT <- function(dataType, avg_interval){
                      summarise(dailyAvg_T = mean(temp_C)) %>%
                      # Adding datatype to column name
                      rename_all(~gsub("dailyAvg_T", paste0(dataType, "_dailyAvg_T"), .x)) %>%
+                     ungroup()),
+             env = .GlobalEnv)
+    }
+    
+    # A dataset with 3 hour running averages for plotting figures.
+    if(avg_interval == "running"){
+      assign(paste0(dataType, "_runningAvg_T"),
+             rbind(get(paste0(dataType, "_runningAvg_T"),
+                       env = .GlobalEnv),
+                   # Summarizing the temperature data.
+                   temp_i %>%
+                     mutate(runningAvg_T = rollmean(temp_C, 12, fill = list(head(temp_i$temp_C, 5), NA, tail(temp_i$temp_C, 5)), na.pad = "centre")) %>%
+                     # Adding datatype to column name
+                     rename_all(~gsub("runningAvg_T", paste0(dataType, "_runningAvg_T"), .x)) %>%
                      ungroup()),
              env = .GlobalEnv)
     }

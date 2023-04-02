@@ -10,9 +10,11 @@ library(tidyverse)
 library(here)
 
 # Set a preference for dplyr functions.
-conflicts_prefer(dplyr::filter(),
-                 dplyr::select(),
-                 dplyr::mutate())
+conflicted::conflicts_prefer(dplyr::filter(),
+                             dplyr::select(),
+                             dplyr::mutate(),
+                             base::as.Date(),
+                             base::as.Date.numeric())
 
 # STEP ONE: Load IRGA data--------------------
 asIRGA <- list.files(here("data/IRGA_flux/assembled_files"), full.names = TRUE) %>%
@@ -114,7 +116,7 @@ asIRGA <- asIRGA %>%
                             TRUE ~ T_soil)) %>%
   select(-c(soil_daytimeT, air_daytimeT, DOY195MEAD))
 
-rm(air_temp, soil_temp, fullTemp, soil_moisture, GEI) # keeping the global environment clean.
+rm(air_temp, soil_temp, fullTemp) # keeping the global environment clean.
 
 # STEP FOUR: calculate NEE--------------------
 source(here("scripts/data_assembly/flux_conversion.R"))
@@ -129,7 +131,9 @@ fluxData <- asIRGA %>%
             GEI = mean (GEI)) %>%
   ungroup() %>%
   mutate(flux_umol_s_m2 = fluxConvert(flux_ppm_s, T_air),
-         treatment = as.factor(treatment))
+         treatment = as.factor(treatment),
+         site = as.factor(site),
+         plot = as.numeric(plot))
 
 # Separate the light readings
 NEE <- fluxData %>%
@@ -147,7 +151,7 @@ ER <- fluxData %>%
 GEP <- NEE %>%
   filter(!(site == "DRYAS" & plot == 13 & treatment == "C" & doy == 207)) %>%
   left_join(select(ER, -c("T_air", "T_soil")), 
-            by = c("site", "plot", "treatment", "doy", "soil_moisture"),
+            by = c("site", "plot", "treatment", "doy", "soil_moisture", "GEI"),
                  keep = FALSE) %>%
   # NEE = GEP + ER (where ER is measured as a negative flux)
   mutate(GEP_umol_s_m2 = NEE_umol_s_m2 - ER_umol_s_m2)
