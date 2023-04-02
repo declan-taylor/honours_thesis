@@ -116,7 +116,7 @@ asIRGA <- asIRGA %>%
                             TRUE ~ T_soil)) %>%
   select(-c(soil_daytimeT, air_daytimeT, DOY195MEAD))
 
-rm(air_temp, soil_temp, fullTemp, soil_moisture, GEI) # keeping the global environment clean.
+rm(air_temp, soil_temp, fullTemp) # keeping the global environment clean.
 
 # STEP FOUR: calculate NEE--------------------
 source(here("scripts/data_assembly/flux_conversion.R"))
