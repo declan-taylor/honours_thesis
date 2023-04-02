@@ -60,8 +60,8 @@ GEI.GEP <- ggplot(data = GEP,
 # Export
 ggsave("regressionGEI_NEE.png", plot = GEI.NEE,
        width = 2000, height = 1700, units = "px",
-       device = "png", path = here("figures"))
+       device = "png", path = here("figures/regressions"))
 
 ggsave("GEI_regressions.png", plot = GEI.GEP + GEI.ER + GEI.NEE + patchwork::plot_layout(),
        width = 5500, height = 3000, units = "px",
-       device = "png", path = here("figures"))
+       device = "png", path = here("figures/regressions"))
