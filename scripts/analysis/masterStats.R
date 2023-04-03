@@ -3,6 +3,7 @@ library(here)
 library(lubridate)
 library(lme4) # updated version of nlme.
 library(lmerTest)
+library(sjPlot)
 library(conflicted)
 # Specify which package the stats should perfer.
 conflicts_prefer(lmerTest::lmList(),
@@ -44,6 +45,7 @@ NEE.mod1 <- lmer(NEE_umol_s_m2 ~ treatment + (1|plot:site), data = NEE)
 
 NEE.mod1 <- lmer(NEE_umol_s_m2 ~ treatment + (1|site/plot), data = NEE)
 summary(NEE.mod1)
+tab_model(NEE.mod1, p.val = "kr", show.fstat = TRUE, show.df = TRUE, show.obs = TRUE)
 # Estimating the effect of treatment accounting for the variation in flux across 
 # sites, but ALSO the variation in `the effect of treatment on flux` across 
 # the 12 plot:site factors. THIS MODEL SELECTED.
@@ -60,9 +62,12 @@ NEE.mod1 <- lmer(NEE_umol_s_m2 ~ treatment + (treatment|site/plot), data = NEE)
 
 ER.mod1 <- lmer(ER_umol_s_m2 ~ treatment + (1|site/plot), data = ER)
 summary(ER.mod1) # Estimate treatmentT = -0.0029292, p = 0.00115 **
+tab_model(ER.mod1, p.val = "kr", show.fstat = TRUE, show.df = TRUE, show.obs = TRUE)
 
 GEP.mod1 <- lmer(GEP_umol_s_m2 ~ treatment + (1|site/plot), data = GEP)
 summary(GEP.mod1) # Estimate treatmentT = 0.008918, p = 0.0245*
+tab_model(GEP.mod1, p.val = "kr", show.fstat = TRUE, show.df = TRUE, show.obs = TRUE)
+
 
 # 3. Test for differences between sites too.-------------------------
 NEE.mod2 <- lmer(NEE_umol_s_m2 ~ treatment + site + (1|site:plot), data = NEE) 
@@ -80,12 +85,32 @@ NEE.mod3 <- lmer(NEE_umol_s_m2 ~ treatment + GEI + soil_moisture + T_air + T_soi
 # BOUNDARY IS SINGULAR
 
 NEE.mod3 <- lmer(NEE_umol_s_m2 ~ treatment + GEI + soil_moisture + T_air + (1|site:plot), data = NEE)
-summary(NEE.mod3) 
+summary(NEE.mod3)
+tab_model(NEE.mod3, p.val = "kr", show.fstat = TRUE, show.df = TRUE, show.obs = TRUE)
 
 GEP.mod3 <- lmer(GEP_umol_s_m2 ~ treatment + GEI + soil_moisture + T_air + T_soil + (1|site:plot), data = GEP)
+#GEP.mod3 <- lmer(GEP_umol_s_m2 ~ treatment + GEI + soil_moisture + T_air + T_soil + (1|site/plot), data = GEP)
 summary(GEP.mod3)
+tab_model(GEP.mod3, p.val = "kr", show.fstat = TRUE, show.df = TRUE, show.obs = TRUE)
 
 ER.mod3 <- lmer(ER_umol_s_m2 ~ treatment + GEI + soil_moisture + T_air + T_soil + (1|site:plot), data = ER)
-summary(ER.mod3) 
+# ER.mod3 <- lmer(ER_umol_s_m2 ~ treatment + GEI + soil_moisture + T_air + T_soil + (1|site/plot), data = ER)
+summary(ER.mod3)
+tab_model(ER.mod3, p.val = "kr", show.fstat = TRUE, show.df = TRUE, show.obs = TRUE)
+
+
+
+# 5. Adding in site as a fixed effect.-----------------------------------------
+NEE.mod3 <- lmer(NEE_umol_s_m2 ~ treatment + site + GEI + soil_moisture + T_air + (1|site:plot), data = NEE)
+summary(NEE.mod3)
+tab_model(NEE.mod3, p.val = "kr", show.fstat = TRUE, show.df = TRUE, show.obs = TRUE)
+
+ER.mod3 <- lmer(ER_umol_s_m2 ~ treatment + site + GEI + soil_moisture + T_air + T_soil + (1|site:plot), data = ER)
+summary(ER.mod3)
+tab_model(ER.mod3, p.val = "kr", show.fstat = TRUE, show.df = TRUE, show.obs = TRUE)
+
+GEP.mod3 <- lmer(GEP_umol_s_m2 ~ treatment + site + GEI + soil_moisture + T_air + T_soil + (1|site:plot), data = GEP)
+summary(GEP.mod3)
+tab_model(GEP.mod3, p.val = "kr", show.fstat = TRUE, show.df = TRUE, show.obs = TRUE)
 
 # "parameter estimate of the slope of the relationship"

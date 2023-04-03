@@ -1,0 +1,156 @@
+﻿NEE.mod1,,,,
+,NEE umol s m 2,,,
+Predictors,Estimates,CI,p,df
+(Intercept),0.01,-0.01 – 0.03,0.115,2.44
+treatment [T],0.01,-0.00 – 0.01,0.077,67.15
+Random Effects,,,,
+σ2,0,,,
+τ00 plot:site,0,,,
+τ00 site,0,,,
+ICC,0.25,,,
+N plot,4,,,
+N site,3,,,
+Observations,80,,,
+Marginal R2 / Conditional R2,0.030 / 0.272,,,
+,,,,
+ER.mod1,,,,
+,ER umol s m 2,,,
+Predictors,Estimates,CI,p,df
+(Intercept),-0.01,-0.03 – 0.01,0.101,2.04
+treatment [T],0,-0.00 – -0.00,0.001,66.18
+Random Effects,,,,
+σ2,0,,,
+τ00 plot:site,0,,,
+τ00 site,0,,,
+ICC,0.8,,,
+N plot,4,,,
+N site,3,,,
+Observations,79,,,
+Marginal R2 / Conditional R2,0.029 / 0.807,,,
+,,,,
+GEP.mod1,,,,
+,GEP umol s m 2,,,
+Predictors,Estimates,CI,p,df
+(Intercept),0.03,-0.01 – 0.06,0.11,2.18
+treatment [T],0.01,0.00 – 0.02,0.025,66.4
+Random Effects,,,,
+σ2,0,,,
+τ00 plot:site,0,,,
+τ00 site,0,,,
+ICC,0.46,,,
+N plot,4,,,
+N site,3,,,
+Observations,79,,,
+Marginal R2 / Conditional R2,0.035 / 0.482,,,
+,,,,
+NEE.mod3,,,,
+,NEE umol s m 2,,,
+Predictors,Estimates,CI,p,df
+(Intercept),-0.01,-0.02 – -0.00,0.038,72.96
+treatment [T],0,-0.00 – 0.00,0.118,65.52
+GEI,0.68,0.61 – 0.76,<0.001,71.35
+soil moisture,0,-0.00 – 0.00,0.573,40.88
+T air,0,-0.00 – 0.00,0.948,72.08
+Random Effects,,,,
+σ2,0,,,
+τ00 site:plot,0,,,
+ICC,0.21,,,
+N site,3,,,
+N plot,4,,,
+Observations,80,,,
+Marginal R2 / Conditional R2,0.827 / 0.863,,,
+,,,,
+ER.mod3,,,,
+,ER umol s m 2,,,
+Predictors,Estimates,CI,p,df
+(Intercept),-0.01,-0.01 – -0.00,0.002,57
+treatment [T],0,-0.00 – -0.00,0.043,62.29
+GEI,-0.12,-0.16 – -0.08,<0.001,63.4
+soil moisture,0,-0.00 – 0.00,0.288,72.51
+T air,0,-0.00 – 0.00,0.086,63.44
+T soil,0,-0.00 – 0.00,0.18,63.23
+Random Effects,,,,
+σ2,0,,,
+τ00 site:plot,0,,,
+ICC,0.75,,,
+N site,3,,,
+N plot,4,,,
+Observations,79,,,
+Marginal R2 / Conditional R2,0.216 / 0.801,,,
+,,,,
+GEP.mod3,,,,
+,GEP umol s m 2,,,
+Predictors,Estimates,CI,p,df
+(Intercept),0,-0.01 – 0.01,0.866,70.72
+treatment [T],0,-0.00 – 0.00,0.741,62.82
+GEI,0.8,0.71 – 0.88,<0.001,64.54
+soil moisture,0,-0.00 – 0.00,0.425,70.12
+T air,0,-0.00 – 0.00,0.371,64.16
+T soil,0,-0.00 – 0.00,0.213,63.35
+Random Effects,,,,
+σ2,0,,,
+τ00 site:plot,0,,,
+ICC,0.54,,,
+N site,3,,,
+N plot,4,,,
+Observations,79,,,
+Marginal R2 / Conditional R2,0.740 / 0.882,,,
+,,,,
+NEE.mod4,,,,
+,NEE umol s m 2,,,
+Predictors,Estimates,CI,p,df
+(Intercept),-0.01,-0.02 – -0.00,0.022,65.67
+treatment [T],0,-0.00 – 0.00,0.162,64.19
+site [MEAD],0,-0.01 – 0.00,0.309,25.21
+site [WILL],0,-0.00 – 0.01,0.613,9.47
+GEI,0.68,0.61 – 0.75,<0.001,66.34
+soil moisture,0,-0.00 – 0.00,0.658,70.04
+T air,0,-0.00 – 0.00,0.817,68.54
+Random Effects,,,,
+σ2,0,,,
+τ00 site:plot,0,,,
+ICC,0.22,,,
+N site,3,,,
+N plot,4,,,
+Observations,80,,,
+Marginal R2 / Conditional R2,0.835 / 0.871,,,
+,,,,
+ER.mod4,,,,
+,ER umol s m 2,,,
+Predictors,Estimates,CI,p,df
+(Intercept),-0.01,-0.01 – -0.00,0.002,65.11
+treatment [T],0,-0.00 – -0.00,0.028,62.27
+site [MEAD],0.01,0.00 – 0.01,0.003,24.71
+site [WILL],-0.01,-0.01 – -0.00,0.001,9.61
+GEI,-0.12,-0.16 – -0.08,<0.001,65.12
+soil moisture,0,-0.00 – 0.00,0.969,67.03
+T air,0,-0.00 – 0.00,0.132,64.33
+T soil,0,-0.00 – 0.00,0.166,67.63
+Random Effects,,,,
+σ2,0,,,
+τ00 site:plot,0,,,
+ICC,0.22,,,
+N site,3,,,
+N plot,4,,,
+Observations,79,,,
+Marginal R2 / Conditional R2,0.803 / 0.847,,,
+,,,,
+GEP.mod4,,,,
+,GEP umol s m 2,,,
+Predictors,Estimates,CI,p,df
+(Intercept),0,-0.01 – 0.01,0.775,65
+treatment [T],0,-0.00 – 0.00,0.924,62.21
+site [MEAD],-0.01,-0.02 – -0.00,0.024,23.91
+site [WILL],0.01,0.00 – 0.02,0.029,9.58
+GEI,0.79,0.70 – 0.88,<0.001,63.97
+soil moisture,0,-0.00 – 0.00,0.671,67.45
+T air,0,-0.00 – 0.00,0.47,65.46
+T soil,0,-0.00 – 0.00,0.148,64.46
+Random Effects,,,,
+σ2,0,,,
+τ00 site:plot,0,,,
+ICC,0.23,,,
+N site,3,,,
+N plot,4,,,
+Observations,79,,,
+Marginal R2 / Conditional R2,0.875 / 0.904,,,
