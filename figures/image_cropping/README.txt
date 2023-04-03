@@ -1,0 +1,1 @@
+Cropping workflow image was produced in Adobe Photoshop.
