@@ -269,7 +269,8 @@ plotGEI <- ggplot(data = GEI %>%
   facet_wrap(~ site)+
   theme_bw()+
   theme(panel.grid.major = element_blank(),
-        panel.grid.minor = element_blank())
+        panel.grid.minor = element_blank(),
+        legend.position = "none")
 
 airtempLine + soiltempLine + plotSM + plotGEI + patchwork::plot_layout(ncol = 1)
 airtempLine + soiltempLine + plotSM + plotGEI + GEP_line + ER_line + NEE_line + patchwork::plot_layout(ncol = 1)
@@ -283,4 +284,23 @@ ggsave("flux_byDOY.png", plot = GEP_line + ER_line + NEE_line + patchwork::plot_
 
 ggsave("envFactors_byDOY.png", plot = airtempLine + soiltempLine + plotSM + plotGEI + patchwork::plot_layout(ncol = 1),
        height = 5000, width = 3000, units = "px",
+       device = "png", path = here("figures"))
+
+
+# MEGA POSTER FIGURE
+ggsave("byDOY_poster.png", plot = 
+         airtempLine + theme(axis.title.y = element_text(size = 17))+
+         soiltempLine + theme(axis.title.y = element_text(17))+
+         plotSM + theme(axis.title.y = element_text(size = 17))+
+         plotGEI + scale_x_continuous(breaks = scales::extended_breaks(n = 8))+ theme(axis.title.y = element_text(size = 17),
+                                                                                      axis.title.x = element_text(size = 17))+ #xlab(NULL)+
+         #GEP_line+ theme(axis.title.y = element_text(size = 15))+
+         #ER_line + theme(legend.position = "none",
+        #                 axis.title.y = element_text(size = 15))+ 
+         #NEE_line + theme(legend.position = "bottom",
+        #                  axis.text.x= element_text(size = 12),
+        #                  axis.title.y = element_text(size = 15),
+        #                  axis.title.x = element_text(size = 15)) + 
+         patchwork::plot_layout(ncol = 1),
+       height = 6500, width = 4500, units = "px",
        device = "png", path = here("figures"))
