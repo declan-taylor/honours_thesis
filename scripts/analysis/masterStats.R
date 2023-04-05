@@ -39,11 +39,17 @@ bartlett.test(ER_umol_s_m2 ~ treatment, data = ER) #p = 0.6964
 # lme4: lmer(formula, data = <>. REML = ??), glmer(), nlmer().
 
 # AVERAGES
-mean.C <- mean(pull(filter(NEE, treatment == "C", site = "DRYAS")["NEE_umol_s_m2"]))
-mean.T <- mean(pull(filter(NEE, treatment == "T", site = "DRYAS")["NEE_umol_s_m2"])) 
+mean(pull(filter(GEP, treatment == "C")["GEP_umol_s_m2"]))
+
+mean.C <- mean(pull(filter(NEE, treatment == "C", site == "DRYAS")["NEE_umol_s_m2"]))
+mean.T <- mean(pull(filter(NEE, treatment == "T", site == "DRYAS")["NEE_umol_s_m2"])) 
+
+mean.site1 <-mean(pull(filter(NEE, site == "WILL")["NEE_umol_s_m2"]))
+mean.site2 <-mean(pull(filter(NEE, site == "DRYAS")["NEE_umol_s_m2"]))
 
 # Percent difference
 1-mean.C/mean.T
+1-mean.site1/mean.site2
 
 # BASIC MODEL (1): FLUX AND TREATMENT
 # First, set up a random effects structure.
