@@ -41,8 +41,8 @@ bartlett.test(ER_umol_s_m2 ~ treatment, data = ER) #p = 0.6964
 # AVERAGES
 mean(pull(filter(GEP, treatment == "C")["GEP_umol_s_m2"]))
 
-mean.C <- mean(pull(filter(NEE, treatment == "C", site == "DRYAS")["NEE_umol_s_m2"]))
-mean.T <- mean(pull(filter(NEE, treatment == "T", site == "DRYAS")["NEE_umol_s_m2"])) 
+mean.C <- mean(pull(filter(ER, treatment == "C")["ER_umol_s_m2"]))
+mean.T <- mean(pull(filter(ER, treatment == "T")["ER_umol_s_m2"])) 
 
 mean.site1 <-mean(pull(filter(NEE, site == "WILL")["NEE_umol_s_m2"]))
 mean.site2 <-mean(pull(filter(NEE, site == "DRYAS")["NEE_umol_s_m2"]))
@@ -50,6 +50,44 @@ mean.site2 <-mean(pull(filter(NEE, site == "DRYAS")["NEE_umol_s_m2"]))
 # Percent difference
 1-mean.C/mean.T
 1-mean.site1/mean.site2
+
+# Figure 2 raw numbers
+flux_means <- matrix(c(
+  "NEE.C.DRYAS", mean(pull(filter(NEE, treatment == "C", site == "DRYAS")["NEE_umol_s_m2"])),
+  "NEE.C.MEAD", mean(pull(filter(NEE, treatment == "C", site == "MEAD")["NEE_umol_s_m2"])),
+  "NEE.C.WILL", mean(pull(filter(NEE, treatment == "C", site == "WILL")["NEE_umol_s_m2"])),
+  "NEE.T.DRYAS", mean(pull(filter(NEE, treatment == "T", site == "DRYAS")["NEE_umol_s_m2"])),
+  "NEE.T.MEAD", mean(pull(filter(NEE, treatment == "T", site == "MEAD")["NEE_umol_s_m2"])),
+  "NEE.T.WILL", mean(pull(filter(NEE, treatment == "T", site == "WILL")["NEE_umol_s_m2"])),
+  
+  "GEP.C.DRYAS", mean(pull(filter(GEP, treatment == "C", site == "DRYAS")["GEP_umol_s_m2"])),
+  "GEP.C.MEAD", mean(pull(filter(GEP, treatment == "C", site == "MEAD")["GEP_umol_s_m2"])),
+  "GEP.C.WILL", mean(pull(filter(GEP, treatment == "C", site == "WILL")["GEP_umol_s_m2"])),
+  "GEP.T.DRYAS", mean(pull(filter(GEP, treatment == "T", site == "DRYAS")["GEP_umol_s_m2"])),
+  "GEP.T.MEAD", mean(pull(filter(GEP, treatment == "T", site == "MEAD")["GEP_umol_s_m2"])),
+  "GEP.T.WILL", mean(pull(filter(GEP, treatment == "T", site == "WILL")["GEP_umol_s_m2"])),
+  
+  "ER.C.DRYAS", mean(pull(filter(ER, treatment == "C", site == "DRYAS")["ER_umol_s_m2"])),
+  "ER.C.MEAD", mean(pull(filter(ER, treatment == "C", site == "MEAD")["ER_umol_s_m2"])),
+  "ER.C.WILL", mean(pull(filter(ER, treatment == "C", site == "WILL")["ER_umol_s_m2"])),
+  "ER.T.DRYAS", mean(pull(filter(ER, treatment == "T", site == "DRYAS")["ER_umol_s_m2"])),
+  "ER.T.MEAD", mean(pull(filter(ER, treatment == "T", site == "MEAD")["ER_umol_s_m2"])),
+  "ER.T.WILL", mean(pull(filter(ER, treatment == "T", site == "WILL")["ER_umol_s_m2"]))),
+  ncol = 2, byrow = TRUE)
+
+colnames(flux_means) <- c("info", "flux.mean")
+
+flux_means <- 
+  tibble(as.data.frame(flux_means)) %>%
+  separate(info, into = c("flux", "treatment", "site"), sep = "\\.") %>%
+  mutate(flux.mean = as.numeric(flux.mean)) 
+
+
+#%>%
+  #pivot_wider(id_cols = c("flux", "treatment"),
+  #            id_expand = TRUE,
+  #            names_from = site, names_glue = "_meanFLux", 
+  #            values_from = flux.mean)
 
 # BASIC MODEL (1): FLUX AND TREATMENT
 # First, set up a random effects structure.
@@ -129,18 +167,24 @@ step(ER.mod3, reduce.random = FALSE)
 # 5. Adding in site as a fixed effect.-----------------------------------------
 # These are the full models which provide the bulk of my analysis.
 NEE.mod4 <- lmer(NEE_umol_s_m2 ~ treatment + site + GEI + soil_moisture + T_air + (1|site:plot), data = NEE)
+summary(NEE.mod4)
 step(NEE.mod4)
 NEE.step4 <- lmer(NEE_umol_s_m2 ~ GEI + (1 | site:plot), data = NEE)
+summary(NEE.step4)
 r2(NEE.step4) # Conditional R2: 0.863, Marginal R2: 0.822
 
 ER.mod4 <- lmer(ER_umol_s_m2 ~ treatment + site + GEI + soil_moisture + T_air + (1|site:plot), data = ER)
+summary(ER.mod4)
 step(ER.mod4)
-ER.mod4 <- lmer(ER_umol_s_m2 ~ treatment + site + GEI + (1 | site:plot), data = ER)
-r2(ER.mod4) #  Conditional R2: 0.848, Marginal R2: 0.799
+ER.step4 <- lmer(ER_umol_s_m2 ~ treatment + site + GEI + (1 | site:plot), data = ER)
+summary(ER.step4)
+r2(ER.mod4) #  Conditional R2: 0.846, Marginal R2: 0.797
 
 GEP.mod4 <- lmer(GEP_umol_s_m2 ~ treatment + site + GEI + soil_moisture + T_air + (1|site:plot), data = GEP)
+summary(GEP.mod4)
 step(GEP.mod4, reduce.random = FALSE)
 GEP.step4 <- lmer(GEP_umol_s_m2 ~ site + GEI + (1 | site:plot), data = GEP)
+summary(GEP.step4)
 r2(GEP.step4) #Conditional R2: 0.906, Marginal R2: 0.876
 
 
