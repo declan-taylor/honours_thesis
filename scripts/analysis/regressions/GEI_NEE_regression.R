@@ -4,7 +4,7 @@ generate_GEI(here("data/greenness/cropped_images"))
 # Regression line
 lm_eqn <- function(df, x_var_flux_type){
   m <- lm(get(paste0(x_var_flux_type, "_umol_s_m2")) ~ GEI, df);
-  eq <- substitute(italic(ER) == a + b %.% italic(GEI)*","~~italic(R)^2~"="~r2, 
+  eq <- substitute(italic(NEE) == a + b %.% italic(GEI)*","~~italic(R)^2~"="~r2, 
                    list(a = format(unname(coef(m)[1]), digits = 2),
                         b = format(unname(coef(m)[2]), digits = 2),
                         r2 = format(summary(m)$r.squared, digits = 3)))
@@ -35,6 +35,15 @@ GEI.NEE <- ggplot(data = NEE,
         panel.grid.minor = element_blank())
 
 # NEXT DO THIS FOR ER AND GEP.
+lm_eqn <- function(df, x_var_flux_type){
+  m <- lm(get(paste0(x_var_flux_type, "_umol_s_m2")) ~ GEI, df);
+  eq <- substitute(italic(ER) == a + b %.% italic(GEI)*","~~italic(R)^2~"="~r2, 
+                   list(a = format(unname(coef(m)[1]), digits = 2),
+                        b = format(unname(coef(m)[2]), digits = 2),
+                        r2 = format(summary(m)$r.squared, digits = 3)))
+  as.character(as.expression(eq));
+}
+
 GEI.ER <- ggplot(data = ER,
                   aes(x = GEI, y = ER_umol_s_m2))+
   geom_point(aes(colour = treatment, shape = treatment))+
@@ -54,6 +63,15 @@ GEI.ER <- ggplot(data = ER,
   theme_bw()+
   theme(panel.grid.major = element_blank(),
         panel.grid.minor = element_blank())
+
+lm_eqn <- function(df, x_var_flux_type){
+  m <- lm(get(paste0(x_var_flux_type, "_umol_s_m2")) ~ GEI, df);
+  eq <- substitute(italic(GEP) == a + b %.% italic(GEI)*","~~italic(R)^2~"="~r2, 
+                   list(a = format(unname(coef(m)[1]), digits = 2),
+                        b = format(unname(coef(m)[2]), digits = 2),
+                        r2 = format(summary(m)$r.squared, digits = 3)))
+  as.character(as.expression(eq));
+}
 
 GEI.GEP <- ggplot(data = GEP,
                   aes(x = GEI, y = GEP_umol_s_m2))+
@@ -84,18 +102,18 @@ ggsave("GEI_regressions.png", plot = GEI.GEP + GEI.ER + GEI.NEE + patchwork::plo
        width = 5500, height = 3000, units = "px",
        device = "png", path = here("figures/regressions"))
 
-ggsave("GEI_regressions_poster.png", 
-       plot = GEI.GEP + 
-         theme(axis.text = element_text(size = 11),
-               axis.title = element_text(size = 15),
-               legend.position = "none") +
-         GEI.ER +
-         theme(axis.text = element_text(size = 11),
-               axis.title = element_text(size = 15),
-               legend.position = "none") +
-         GEI.NEE + 
-         theme(axis.text = element_text(size = 11),
-               axis.title = element_text(size = 15)) + 
-         patchwork::plot_layout(),
-       width = 5800, height = 3000, units = "px",
-       device = "png", path = here("figures/regressions"))
+#ggsave("GEI_regressions_poster.png", 
+#       plot = GEI.GEP + 
+#         theme(axis.text = element_text(size = 11),
+#               axis.title = element_text(size = 15),
+#               legend.position = "none") +
+#         GEI.ER +
+#         theme(axis.text = element_text(size = 11),
+#               axis.title = element_text(size = 15),
+#               legend.position = "none") +
+#         GEI.NEE + 
+#         theme(axis.text = element_text(size = 11),
+#               axis.title = element_text(size = 15)) + 
+#         patchwork::plot_layout(),
+#       width = 5800, height = 3000, units = "px",
+#       device = "png", path = here("poster_materials"))

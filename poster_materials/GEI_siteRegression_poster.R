@@ -12,7 +12,7 @@ lm_eqn <- function(df, x_var_flux_type){
 }
 
 # Regression plot NEE
-GEI.NEE <- ggplot(data = NEE,
+GEI.NEE.sites <- ggplot(data = NEE,
                   aes(x = GEI, y = NEE_umol_s_m2))+
   geom_point(aes(colour = treatment, shape = treatment))+
   geom_smooth(aes(colour = treatment, fill = treatment),
@@ -32,7 +32,16 @@ GEI.NEE <- ggplot(data = NEE,
         panel.grid.minor = element_blank())
 
 # NEXT DO THIS FOR ER AND GEP.
-GEI.ER <- ggplot(data = ER,
+lm_eqn <- function(df, x_var_flux_type){
+  m <- lm(get(paste0(x_var_flux_type, "_umol_s_m2")) ~ GEI, df);
+  eq <- substitute(italic(ER) == a + b %.% italic(GEI)*","~~italic(R)^2~"="~r2, 
+                   list(a = format(unname(coef(m)[1]), digits = 2),
+                        b = format(unname(coef(m)[2]), digits = 2),
+                        r2 = format(summary(m)$r.squared, digits = 3)))
+  as.character(as.expression(eq));
+}
+
+GEI.ER.sites <- ggplot(data = ER,
                  aes(x = GEI, y = ER_umol_s_m2))+
   geom_point(aes(colour = treatment, shape = treatment))+
   geom_smooth(aes(colour = treatment, fill = treatment),
@@ -51,7 +60,16 @@ GEI.ER <- ggplot(data = ER,
   theme(panel.grid.major = element_blank(),
         panel.grid.minor = element_blank())
 
-GEI.GEP <- ggplot(data = GEP,
+lm_eqn <- function(df, x_var_flux_type){
+  m <- lm(get(paste0(x_var_flux_type, "_umol_s_m2")) ~ GEI, df);
+  eq <- substitute(italic(GEP) == a + b %.% italic(GEI)*","~~italic(R)^2~"="~r2, 
+                   list(a = format(unname(coef(m)[1]), digits = 2),
+                        b = format(unname(coef(m)[2]), digits = 2),
+                        r2 = format(summary(m)$r.squared, digits = 3)))
+  as.character(as.expression(eq));
+}
+
+GEI.GEP.sites <- ggplot(data = GEP,
                   aes(x = GEI, y = GEP_umol_s_m2))+
   geom_point(aes(colour = treatment, shape = treatment))+
   geom_smooth(aes(colour = treatment, fill = treatment),
@@ -80,17 +98,17 @@ ggsave("GEI_regressions.png", plot = GEI.GEP + GEI.ER + GEI.NEE + patchwork::plo
        device = "png", path = here("figures/regressions"))
 
 ggsave("GEI_siteRegressions_poster.png", 
-       plot = GEI.GEP + 
+       plot = GEI.GEP.sites + 
          theme(axis.text = element_text(size = 9),
                axis.title = element_text(size = 12),
                strip.text.x = element_text(face = "bold"),
                legend.position = "none") +
-         GEI.ER +
+         GEI.ER.sites +
          theme(axis.text = element_text(size = 9),
                axis.title = element_text(size = 12),
                strip.text.x = element_text(face = "bold"),
                legend.position = "none") +
-         GEI.NEE + 
+         GEI.NEE.sites + 
          theme(axis.text = element_text(size = 9),
                axis.title = element_text(size = 12),
                strip.text.x = element_text(face = "bold")) + 
