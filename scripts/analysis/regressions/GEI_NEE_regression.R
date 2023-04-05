@@ -20,7 +20,7 @@ GEI.NEE <- ggplot(data = NEE,
   geom_hline(yintercept = 0, linetype = 2, colour = "darkgrey", alpha = 1)+
   annotate("text", x = 0.035, y = 0.08,
            # SIZE SHOULD CHANGE FOR SINGULAR PLOT
-           size = 5,
+           size = 4.5,
            label = lm_eqn(NEE, "NEE"), parse = TRUE)+
   scale_y_continuous(limits = c(-0.035, 0.09))+
   scale_fill_discrete(type=c("#89C5DA", "#DA5724"),
@@ -50,7 +50,7 @@ GEI.ER <- ggplot(data = ER,
   geom_smooth(aes(colour = treatment, fill = treatment),
               method = "lm", se = TRUE, alpha = 0.2)+
   geom_hline(yintercept = 0, linetype = 2, colour = "darkgrey", alpha = 1)+
-  annotate("text", x = 0.035, y = 0.08, size = 5,
+  annotate("text", x = 0.035, y = 0.08, size = 4.5,
            label = lm_eqn(ER, "ER"), parse = TRUE)+
   scale_fill_discrete(type=c("#89C5DA", "#DA5724"),
                       labels=c("ambient", "warmed (OTC)"))+
@@ -79,7 +79,7 @@ GEI.GEP <- ggplot(data = GEP,
   geom_smooth(aes(colour = treatment, fill = treatment),
               method = "lm", se = TRUE, alpha = 0.2)+
   geom_hline(yintercept = 0, linetype = 2, colour = "darkgrey", alpha = 1)+
-  annotate("text", x = 0.035, y = 0.08, size = 5,
+  annotate("text", x = 0.035, y = 0.08, size = 4.5,
            label = lm_eqn(GEP, "GEP"), parse = TRUE)+
   scale_fill_discrete(type=c("#89C5DA", "#DA5724"),
                       labels=c("ambient", "warmed (OTC)"))+

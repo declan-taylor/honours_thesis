@@ -21,5 +21,5 @@ ggsave("GEI_regressions.png",
           # Set heights of each row.
           patchwork::plot_layout(heights = c(5, 2)),
   
-  width = 5800, height = 3000, units = "px",
+  width = 5000, height = 3000, units = "px",
   device = "png", path = here("figures"))
