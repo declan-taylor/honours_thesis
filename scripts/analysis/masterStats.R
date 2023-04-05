@@ -14,7 +14,7 @@ conflicts_prefer(lmerTest::lmList(),
 # Run `master_dataframe.R` first.
 # source(here("scripts/data_assembly/master_dataframe.R"))
 
-# 1. Checking the data ditribution-------------------------
+# Checking the data ditribution-------------------------
 hist(NEE$NEE_umol_s_m2)
 hist(ER$ER_umol_s_m2)
 hist(GEP$GEP_umol_s_m2)
@@ -25,7 +25,27 @@ summary(GEP$GEP_umol_s_m2)
 
 ## Testing if parametric
 shapiro.test(NEE$NEE_umol_s_m2) # p-value = 0.02408
+hist(NEE$NEE_umol_s_m2, breaks = 13) # quite normal looking
+qqnorm(NEE$NEE_umol_s_m2)
+
 shapiro.test(ER$ER_umol_s_m2) # p-value = 0.003179
+hist(ER$ER_umol_s_m2, breaks = 13) # fairly left skewed (most values closer to zero)
+qqnorm(ER$ER_umol_s_m2) # maybe a bit logistic
+# Log-transform ER
+#ER <- ER %>%
+#  mutate(logER = log(ER_umol_s_m2 + 1))
+
+shapiro.test(GEP$GEP_umol_s_m2) # p-value = 5.691e-05
+hist(GEP$GEP_umol_s_m2) # fairly left skewed (most values closer to zero
+qqnorm(GEP$GEP_umol_s_m2) # maybe a bit logistic
+
+#GEP <- GEP %>%
+#  mutate(logGEP = log(GEP_umol_s_m2))
+#shapiro.test(GEP$logGEP) # p-value = 0.006108
+#hist(GEP$logGEP) # still quite left skewed (most values closer to zero)
+#qqnorm(GEP$logGEP)
+
+# How to fit non-normal distributions?
 
 ## Testing homoscedasticity
 bartlett.test(NEE_umol_s_m2 ~ site, data = NEE) #p = 0.2472
@@ -89,7 +109,11 @@ flux_means <-
   #            names_from = site, names_glue = "_meanFLux", 
   #            values_from = flux.mean)
 
-# BASIC MODEL (1): FLUX AND TREATMENT
+# Difference in warming response across sites----------------
+
+
+
+# BASIC MODEL (1): FLUX AND TREATMENT----------------
 # First, set up a random effects structure.
 NEE.mod1 <- lmer(NEE_umol_s_m2 ~ treatment + (1|plot:site), data = NEE)
 # Estimating the effect of treatment accounting for the variation in flux 
@@ -122,7 +146,7 @@ summary(GEP.mod1) # Estimate treatmentT = 0.008918, p = 0.0245*
 r2(GEP.mod1) # Conditional R2: 0.482, Marginal R2: 0.035
 
 
-# 3. Test for differences between sites too.-------------------------
+# 2. Test for differences between sites too.-------------------------
 NEE.mod2 <- lmer(NEE_umol_s_m2 ~ treatment + site + (1|site:plot), data = NEE)
 difflsmeans(NEE.mod2)
 r2(NEE.mod2) #Conditional R2: 0.237, Marginal R2: 0.226
@@ -139,7 +163,7 @@ r2(ER.mod2) #  Conditional R2: 0.758, Marginal R2: 0.721
 summary(ER.mod2)
  
 
-# 4. Do treatment, GEI, SM, T_air, T_soil affect NEE? ?-------------------------
+# 3. Do treatment, GEI, SM, T_air, T_soil affect NEE? ?-------------------------
 # I'm deciding to leave these out of the paper because ultimately, including 
 # site in the full model means they can just be selected out again. Given that 
 # site cannot be included in the random effects structure (too few levels and 
@@ -164,10 +188,11 @@ ER.mod3 <- lmer(ER_umol_s_m2 ~ treatment + GEI + soil_moisture + T_air + (1|site
 # ER.mod3 <- lmer(ER_umol_s_m2 ~ treatment + GEI + soil_moisture + T_air + T_soil + (1|site/plot), data = ER)
 step(ER.mod3, reduce.random = FALSE)
 
-# 5. Adding in site as a fixed effect.-----------------------------------------
+# 4. Adding in site as a fixed effect.-----------------------------------------
 # These are the full models which provide the bulk of my analysis.
 NEE.mod4 <- lmer(NEE_umol_s_m2 ~ treatment + site + GEI + soil_moisture + T_air + (1|site:plot), data = NEE)
 summary(NEE.mod4)
+plot(NEE.mod4)
 step(NEE.mod4)
 NEE.step4 <- lmer(NEE_umol_s_m2 ~ GEI + (1 | site:plot), data = NEE)
 summary(NEE.step4)
@@ -175,6 +200,7 @@ r2(NEE.step4) # Conditional R2: 0.863, Marginal R2: 0.822
 
 ER.mod4 <- lmer(ER_umol_s_m2 ~ treatment + site + GEI + soil_moisture + T_air + (1|site:plot), data = ER)
 summary(ER.mod4)
+plot(ER.mod4)
 step(ER.mod4)
 ER.step4 <- lmer(ER_umol_s_m2 ~ treatment + site + GEI + (1 | site:plot), data = ER)
 summary(ER.step4)
@@ -182,6 +208,11 @@ r2(ER.mod4) #  Conditional R2: 0.846, Marginal R2: 0.797
 
 GEP.mod4 <- lmer(GEP_umol_s_m2 ~ treatment + site + GEI + soil_moisture + T_air + (1|site:plot), data = GEP)
 summary(GEP.mod4)
+plot(GEP.mod4)
+plot(resid(GEP.mod4, type = "pearson") ~ fitted(GEP.mod4))
+qqnorm(resid(GEP.mod4, type = "pearson"))
+qqline(resid(GEP.mod4, type = "pearson"))
+
 step(GEP.mod4, reduce.random = FALSE)
 GEP.step4 <- lmer(GEP_umol_s_m2 ~ site + GEI + (1 | site:plot), data = GEP)
 summary(GEP.step4)
