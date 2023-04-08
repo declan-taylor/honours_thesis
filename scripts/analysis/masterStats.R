@@ -54,24 +54,19 @@ bartlett.test(NEE_umol_s_m2 ~ treatment, data = NEE) #p = 0.0859
 bartlett.test(ER_umol_s_m2 ~ site, data = ER) #p = 0.006026
 bartlett.test(ER_umol_s_m2 ~ treatment, data = ER) #p = 0.6964
 
-# 2. Does long term warming affect NEE?-------------------------
+# Does long term warming affect NEE?-------------------------
 ## If we proceed to model selection, REML should likely be set to FALSE. Otherwise, true.
 # lme4: lmer(formula, data = <>. REML = ??), glmer(), nlmer().
 
-# AVERAGES
-mean(pull(filter(GEP, treatment == "C")["GEP_umol_s_m2"]))
-
+# Avg
 mean.C <- mean(pull(filter(ER, treatment == "C")["ER_umol_s_m2"]))
 mean.T <- mean(pull(filter(ER, treatment == "T")["ER_umol_s_m2"])) 
-
-mean.site1 <-mean(pull(filter(NEE, site == "WILL")["NEE_umol_s_m2"]))
-mean.site2 <-mean(pull(filter(NEE, site == "DRYAS")["NEE_umol_s_m2"]))
 
 # Percent difference
 1-mean.C/mean.T
 1-mean.site1/mean.site2
 
-# Figure 2 raw numbers
+# Table of raw flux values
 flux_means <- matrix(c(
   "NEE.C.DRYAS", mean(pull(filter(NEE, treatment == "C", site == "DRYAS")["NEE_umol_s_m2"])),
   "NEE.C.MEAD", mean(pull(filter(NEE, treatment == "C", site == "MEAD")["NEE_umol_s_m2"])),
@@ -103,15 +98,27 @@ flux_means <-
   mutate(flux.mean = as.numeric(flux.mean)) 
 
 
-#%>%
-  #pivot_wider(id_cols = c("flux", "treatment"),
-  #            id_expand = TRUE,
-  #            names_from = site, names_glue = "_meanFLux", 
-  #            values_from = flux.mean)
+# Difference in warming response across sites?-----------
+SITE <- "MEAD"
+mean.C <- mean(pull(filter(GEP, treatment == "C", site == SITE)["ER_umol_s_m2"]))
+mean.T <- mean(pull(filter(GEP, treatment == "T", site == SITE)["ER_umol_s_m2"]))
 
-# Difference in warming response across sites----------------
+mean.T-mean.C
+(1-mean.C/mean.T)*100
+# NEE warming response: 
+## DRYAS = +0.003238455 or 22.24%
+## WILL = +0.01047813 or 33.37%
+## MEAD = +0.002315167 or 23.85%
 
+# GEP warming response:
+## DRYAS = +0.00675672 or 22.98%
+## WILL = +0.01272733 or 23.68%
+## MEAD = +0.005915545 or 32.00%
 
+# ER warming response:
+## DRYAS = -0.003161213 or 21.30%
+## WILL = -0.0022492 or 9.673%
+## MEAD = -0.003600377 or 41.01%
 
 # BASIC MODEL (1): FLUX AND TREATMENT----------------
 # First, set up a random effects structure.
