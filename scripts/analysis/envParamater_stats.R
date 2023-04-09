@@ -172,6 +172,14 @@ mean.T <- mean(pull(filter(soilT.24, treatment == "T")["soil_dailyAvg_T"]))
 mean.T <- mean(pull(filter(soilT.day, treatment == "T")["soil_daytimeT"]))
 # T_air = 7.851463
 
+1-7.252091/8.296886 # = 12.59% increase in daytime (C)
+1-7.062826/7.851463 # 10.04% increase in daytime (T)
+
 1-mean.C/mean.T
 # -2.68% colder in 24h
 # -5.67% colder in daytime
+# Compute means for soil moisture------
+mean(pull(filter(aovNEE, site == "WILL")["soil_moisture"])) 
+# MEAD = 63.33%
+# DRYAS = 33.43%
+# WILL = 36.33%
