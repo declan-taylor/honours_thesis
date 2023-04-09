@@ -2,7 +2,9 @@
 generate_GEI(here("data/greenness/cropped_images"))
 
 # Regression line
-lm_eqn <- function(df, x_var_flux_type){
+lm_eqn <- function(df, treatment_letter, x_var_flux_type){
+  df <- df %>% filter(treatment == treatment_letter)
+  
   m <- lm(get(paste0(x_var_flux_type, "_umol_s_m2")) ~ GEI, df);
   eq <- substitute(italic(NEE) == a + b %.% italic(GEI)*","~~italic(R)^2~"="~r2, 
                    list(a = format(unname(coef(m)[1]), digits = 2),
@@ -18,10 +20,15 @@ GEI.NEE <- ggplot(data = NEE,
   geom_smooth(aes(colour = treatment, fill = treatment),
               method = "lm", se = TRUE, alpha = 0.2)+
   geom_hline(yintercept = 0, linetype = 2, colour = "darkgrey", alpha = 1)+
-  annotate("text", x = 0.035, y = 0.08,
+  # control equation
+  annotate("text", x = 0.035, y = 0.09,
            # SIZE SHOULD CHANGE FOR SINGULAR PLOT
-           size = 4.5,
-           label = lm_eqn(NEE, "NEE"), parse = TRUE)+
+           size = 3.5,
+           label = paste("ambient:", lm_eqn(NEE, "C", "NEE")), parse = TRUE)+
+  # treatment equation
+  annotate("text", x = 0.035, y = 0.08,
+           size = 3.5,
+           label = paste("warmed:", lm_eqn(NEE, "T", "NEE")), parse = TRUE)+
   scale_y_continuous(limits = c(-0.035, 0.09))+
   scale_fill_discrete(type=c("#89C5DA", "#DA5724"),
                       labels=c("ambient", "warmed (OTC)"))+
@@ -35,7 +42,9 @@ GEI.NEE <- ggplot(data = NEE,
         panel.grid.minor = element_blank())
 
 # NEXT DO THIS FOR ER AND GEP.
-lm_eqn <- function(df, x_var_flux_type){
+lm_eqn <- function(df, treatment_letter, x_var_flux_type){
+  df <- df %>% filter(treatment == treatment_letter)
+  
   m <- lm(get(paste0(x_var_flux_type, "_umol_s_m2")) ~ GEI, df);
   eq <- substitute(italic(ER) == a + b %.% italic(GEI)*","~~italic(R)^2~"="~r2, 
                    list(a = format(unname(coef(m)[1]), digits = 2),
@@ -50,8 +59,15 @@ GEI.ER <- ggplot(data = ER,
   geom_smooth(aes(colour = treatment, fill = treatment),
               method = "lm", se = TRUE, alpha = 0.2)+
   geom_hline(yintercept = 0, linetype = 2, colour = "darkgrey", alpha = 1)+
-  annotate("text", x = 0.035, y = 0.08, size = 4.5,
-           label = lm_eqn(ER, "ER"), parse = TRUE)+
+  # control equation
+  annotate("text", x = 0.035, y = 0.09,
+           # SIZE SHOULD CHANGE FOR SINGULAR PLOT
+           size = 3.5,
+           label = paste("ambient:", lm_eqn(ER, "C", "ER")), parse = TRUE)+
+  # treatment equation
+  annotate("text", x = 0.035, y = 0.08,
+           size = 3.5,
+           label = paste("warmed:", lm_eqn(ER, "T", "ER")), parse = TRUE)+
   scale_fill_discrete(type=c("#89C5DA", "#DA5724"),
                       labels=c("ambient", "warmed (OTC)"))+
   scale_colour_discrete(type=c("#89C5DA", "#DA5724"),
@@ -64,7 +80,9 @@ GEI.ER <- ggplot(data = ER,
   theme(panel.grid.major = element_blank(),
         panel.grid.minor = element_blank())
 
-lm_eqn <- function(df, x_var_flux_type){
+lm_eqn <- function(df, treatment_letter, x_var_flux_type){
+  df <- df %>% filter(treatment == treatment_letter)
+  
   m <- lm(get(paste0(x_var_flux_type, "_umol_s_m2")) ~ GEI, df);
   eq <- substitute(italic(GEP) == a + b %.% italic(GEI)*","~~italic(R)^2~"="~r2, 
                    list(a = format(unname(coef(m)[1]), digits = 2),
@@ -79,8 +97,15 @@ GEI.GEP <- ggplot(data = GEP,
   geom_smooth(aes(colour = treatment, fill = treatment),
               method = "lm", se = TRUE, alpha = 0.2)+
   geom_hline(yintercept = 0, linetype = 2, colour = "darkgrey", alpha = 1)+
-  annotate("text", x = 0.035, y = 0.08, size = 4.5,
-           label = lm_eqn(GEP, "GEP"), parse = TRUE)+
+  # control equation
+  annotate("text", x = 0.035, y = 0.09,
+           # SIZE SHOULD CHANGE FOR SINGULAR PLOT
+           size = 3.5,
+           label = paste("ambient:", lm_eqn(GEP, "C", "GEP")), parse = TRUE)+
+  # treatment equation
+  annotate("text", x = 0.035, y = 0.08,
+           size = 3.5,
+           label = paste("warmed:", lm_eqn(GEP, "T", "GEP")), parse = TRUE)+
   scale_fill_discrete(type=c("#89C5DA", "#DA5724"),
                       labels=c("ambient", "warmed (OTC)"))+
   scale_colour_discrete(type=c("#89C5DA", "#DA5724"),
@@ -94,13 +119,13 @@ GEI.GEP <- ggplot(data = GEP,
         panel.grid.minor = element_blank())
 
 # Export
-ggsave("regressionGEI_NEE.png", plot = GEI.NEE,
-       width = 2000, height = 1700, units = "px",
-       device = "png", path = here("figures/regressions"))
+#ggsave("regressionGEI_NEE.png", plot = GEI.NEE,
+#       width = 2000, height = 1700, units = "px",
+#       device = "png", path = here("figures/regressions"))
 
-ggsave("GEI_regressions.png", plot = GEI.GEP + GEI.ER + GEI.NEE + patchwork::plot_layout(),
-       width = 5500, height = 3000, units = "px",
-       device = "png", path = here("figures/regressions"))
+#ggsave("GEI_regressions.png", plot = GEI.GEP + GEI.ER + GEI.NEE + patchwork::plot_layout(),
+#       width = 5500, height = 3000, units = "px",
+#       device = "png", path = here("figures/regressions"))
 
 #ggsave("GEI_regressions_poster.png", 
 #       plot = GEI.GEP + 

@@ -89,29 +89,29 @@ GEI.GEP.sites <- ggplot(data = GEP,
         panel.grid.minor = element_blank())
 
 # Export
-ggsave("regressionGEI_NEE.png", plot = GEI.NEE,
-       width = 2000, height = 1700, units = "px",
-       device = "png", path = here("figures/regressions"))
-
-ggsave("GEI_regressions.png", plot = GEI.GEP + GEI.ER + GEI.NEE + patchwork::plot_layout(),
-       width = 5500, height = 3000, units = "px",
-       device = "png", path = here("figures/regressions"))
-
-ggsave("GEI_siteRegressions_poster.png", 
-       plot = GEI.GEP.sites + 
-         theme(axis.text = element_text(size = 9),
-               axis.title = element_text(size = 12),
-               strip.text.x = element_text(face = "bold"),
-               legend.position = "none") +
-         GEI.ER.sites +
-         theme(axis.text = element_text(size = 9),
-               axis.title = element_text(size = 12),
-               strip.text.x = element_text(face = "bold"),
-               legend.position = "none") +
-         GEI.NEE.sites + 
-         theme(axis.text = element_text(size = 9),
-               axis.title = element_text(size = 12),
-               strip.text.x = element_text(face = "bold")) + 
-         patchwork::plot_layout(),
-       width = 5800, height = 800, units = "px",
-       device = "png", path = here("figures/regressions"))
+#ggsave("regressionGEI_NEE.png", plot = GEI.NEE,
+#       width = 2000, height = 1700, units = "px",
+#       device = "png", path = here("figures/regressions"))
+#
+#ggsave("GEI_regressions.png", plot = GEI.GEP + GEI.ER + GEI.NEE + patchwork::plot_layout(),
+#       width = 5500, height = 3000, units = "px",
+#       device = "png", path = here("figures/regressions"))
+#
+#ggsave("GEI_siteRegressions_poster.png", 
+#       plot = GEI.GEP.sites + 
+#         theme(axis.text = element_text(size = 9),
+#              axis.title = element_text(size = 12),
+#               strip.text.x = element_text(face = "bold"),
+#               legend.position = "none") +
+#         GEI.ER.sites +
+#         theme(axis.text = element_text(size = 9),
+#               axis.title = element_text(size = 12),
+#               strip.text.x = element_text(face = "bold"),
+#               legend.position = "none") +
+#         GEI.NEE.sites + 
+#         theme(axis.text = element_text(size = 9),
+#               axis.title = element_text(size = 12),
+#               strip.text.x = element_text(face = "bold")) + 
+#         patchwork::plot_layout(),
+#       width = 5800, height = 800, units = "px",
+#       device = "png", path = here("figures/regressions"))
