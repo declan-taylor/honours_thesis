@@ -100,22 +100,25 @@ flux_means <-
 
 # Difference in warming response across sites?-----------
 SITE <- "MEAD"
-mean.C <- mean(pull(filter(GEP, treatment == "C", site == SITE)["ER_umol_s_m2"]))
-mean.T <- mean(pull(filter(GEP, treatment == "T", site == SITE)["ER_umol_s_m2"]))
+mean.C <- mean(pull(filter(NEE, treatment == "C")["NEE_umol_s_m2"]))
+mean.T <- mean(pull(filter(NEE, treatment == "T")["NEE_umol_s_m2"]))
 
 mean.T-mean.C
 (1-mean.C/mean.T)*100
 # NEE warming response: 
+## all = +0.005857338 or 30.1%
 ## DRYAS = +0.003238455 or 22.24%
 ## WILL = +0.01047813 or 33.37%
 ## MEAD = +0.002315167 or 23.85%
 
 # GEP warming response:
+## all = +0.008781643 or 24.49%
 ## DRYAS = +0.00675672 or 22.98%
 ## WILL = +0.01272733 or 23.68%
 ## MEAD = +0.005915545 or 32.00%
 
 # ER warming response:
+## all = -0.002882499 or 17.59%
 ## DRYAS = -0.003161213 or 21.30%
 ## WILL = -0.0022492 or 9.673%
 ## MEAD = -0.003600377 or 41.01%

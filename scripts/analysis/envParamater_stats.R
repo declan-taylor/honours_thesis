@@ -131,11 +131,47 @@ summary(aov(soil_daytimeT ~ site * treatment, data = soilT.24))
 # GEI
 aov.GEI <- aov(GEI ~ site * treatment, data = aovNEE)
 summary(aov.GEI)
+interaction.plot(x.factor = aovNEE$treatment,
+                 trace.factor = aovNEE$site,
+                 response = aovNEE$GEI,
+                 type = "b",
+                 fun = mean)
 # I'm not quite sure what to do about this.
 
 
-# Compute means-----------
+# Compute means for air temperature-----------
 mean(pull(filter(aovNEE, treatment == "C")["T_air"])) 
 # T_air = 14.11744
+mean.C <- mean(pull(filter(airT.24, treatment == "C")["air_dailyAvg_T"]))
+# T_air = 9.637753
+mean.C <- mean(pull(filter(airT.day, treatment == "C")["air_daytimeT"]))
+# T_air = 12.74651
+
 mean(pull(filter(aovNEE, treatment == "T")["T_air"])) 
 # T_air = 14.70381
+mean.T <- mean(pull(filter(airT.24, treatment == "T")["air_dailyAvg_T"]))
+# T_air = 11.13659
+mean.T <- mean(pull(filter(airT.day, treatment == "T")["air_daytimeT"]))
+# T_air = 14.50387
+
+1-mean.C/mean.T
+# 12.12% higher for 24h.
+
+# Compute means for soil temperature------
+mean(pull(filter(aovNEE, treatment == "C")["T_soil"])) 
+# T_air = 9.524282
+mean.C <- mean(pull(filter(soilT.24, treatment == "C")["soil_dailyAvg_T"]))
+# T_air = 7.252091
+mean.C <- mean(pull(filter(soilT.day, treatment == "C")["soil_daytimeT"]))
+# T_air = 8.296886
+
+mean(pull(filter(aovNEE, treatment == "T")["T_soil"])) 
+# T_air = 10.27558
+mean.T <- mean(pull(filter(soilT.24, treatment == "T")["soil_dailyAvg_T"]))
+# T_air = 7.062826
+mean.T <- mean(pull(filter(soilT.day, treatment == "T")["soil_daytimeT"]))
+# T_air = 7.851463
+
+1-mean.C/mean.T
+# -2.68% colder in 24h
+# -5.67% colder in daytime
