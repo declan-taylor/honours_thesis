@@ -1,6 +1,7 @@
 # RGB data extraction program, based on code from Alison Leslie Beamish (2011).
 # FYI: MEAD_CTL_14 DOY 206 is missing: subbed in DOY 209.
 
+library(rgdal)
 # Loading rgdal generated "warnings of possible GDAL/OSR exportToProj4() 
 # degradation". Note that by Dec 2023 rgdal will likely be retired and functions 
 # in `terra` will need to be substituted.

@@ -122,7 +122,7 @@ rm(air_temp, soil_temp, fullTemp) # keeping the global environment clean.
 source(here("scripts/data_assembly/flux_conversion.R"))
 fluxData <- asIRGA %>%
   # asIRGA still grouped by site, plot, treatment, light, DOY from STEP ONE.
-  summarise(flux_ppm_s = lm(CO2_ppm ~ time)$coefficients['time'],
+  summarise(flux_ppm_s = lm(CO2_ppm ~ time)$coefficients[['time']],
             flux_sd = sd(CO2_ppm),
             T_air = mean(T_air),
             T_soil = mean(T_soil),

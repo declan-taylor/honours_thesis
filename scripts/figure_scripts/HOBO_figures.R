@@ -40,9 +40,9 @@ airtemp <- ggplot(data = fullTemp, aes(x = site,
   xlab("Site")+
   ylab("Daily Average Air Temperature (ºC)")+
   scale_fill_discrete(type=c("#89C5DA", "#DA5724"),
-                      labels=c("ambient", "warmed (OTC)"),
-                      # legend turned off so that boxplots can be adjacent.
-                      guide = "none")+
+                      labels=c("ambient", "warmed (OTC)")#, guide = "none"
+                      # legend can be turned off so that boxplots can be adjacent.
+                      )+
   scale_colour_discrete(type=c("#89C5DA", "#DA5724"),
                         guide = "none")+
   labs(fill = NULL)+
@@ -50,8 +50,8 @@ airtemp <- ggplot(data = fullTemp, aes(x = site,
   theme(panel.grid.major = element_blank(),
         panel.grid.minor = element_blank())
 
-ggsave("tempBoxplot.png", plot = airtemp + soiltemp + patchwork::plot_layout(),
-       device = "png", path = here("figures"))
+#ggsave("tempBoxplot.png", plot = airtemp + soiltemp + patchwork::plot_layout(),
+#       device = "png", path = here("figures"))
 
 
 # Trying a line figure too. With site as colour and treatment as shape.
@@ -132,5 +132,5 @@ soiltempLine <- ggplot(data = fullTemp,
   theme(panel.grid.major = element_blank(),
         panel.grid.minor = element_blank())
 
-ggsave("tempLine.png", plot = airtempLine + soiltempLine + patchwork::plot_layout(ncol = 1),
-       device = "png", path = here("figures"))
+#ggsave("tempLine.png", plot = airtempLine + soiltempLine + patchwork::plot_layout(ncol = 1),
+#       device = "png", path = here("figures"))

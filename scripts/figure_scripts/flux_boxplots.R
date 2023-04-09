@@ -81,3 +81,26 @@ ggsave("flux_boxplots.png", plot = GEP.boxplot+labs(x = NULL,
                                     NEE.boxplot+labs(y = bquote('NEE (' *mu~'mol' ~CO[2]~ m^-2~s^-1*')')) + patchwork::plot_layout(ncol = 1),
        height = 3000, width = 3000, units = "px",
        device = "png", path = here("figures"))
+
+ggsave("flux_boxplots_poster.png", 
+       # GEP
+       plot = GEP.boxplot+labs(x = NULL,
+                               y = bquote('GEP (' *mu~'mol' ~CO[2]~ m^-2~s^-1*')')) + 
+         theme(axis.text = element_text(size = 11),
+               axis.title = element_text(size = 15),
+               strip.text.x = element_text(size = 12, face = "bold")) +
+         # ER
+         ER.boxplot+labs(x = NULL,
+                         y = bquote('ER (' *mu~'mol' ~CO[2]~ m^-2~s^-1*')')) + 
+         theme(axis.text = element_text(size = 11),
+               axis.title = element_text(size = 15),
+               strip.text.x = element_text(size = 12, face = "bold")) +
+         # NEE
+         NEE.boxplot+labs(y = bquote('NEE (' *mu~'mol' ~CO[2]~ m^-2~s^-1*')')) +
+         theme(axis.text = element_text(size = 11),
+               axis.title = element_text(size = 15),
+               strip.text.x = element_text(size = 12, face = "bold")) +
+         # Compose
+         patchwork::plot_layout(ncol = 3),
+       height = 2000, width = 5800, units = "px",
+       device = "png", path = here("figures"))

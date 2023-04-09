@@ -8,8 +8,8 @@ library(viridis)
 
 # PART 1: flux data--------------------
 # Create a dataframe for each combination of site and day by filtering for DOYs.
-for(i in unique(asIRGA$DOY)){
-  oneDay <- filter(asIRGA, DOY == i)
+for(i in unique(asIRGA$doy)){
+  oneDay <- filter(asIRGA, doy == i)
  
   doy <- as.character(i)
   site <- oneDay$site[1]
@@ -23,9 +23,9 @@ for(i in unique(asIRGA$DOY)){
    # scale_y_continuous(limits = min(oneDay$CO2_ppm), max(oneDay$CO2_ppm))+
     scale_colour_viridis_d() +
     facet_grid(treatment ~ light)+
-    labs(title = paste(site, "_DOY", doy, sep = "")) +
-    xlab("Duration (s)") +
-    ylab("CO2 (ppm)")+
+    labs(title = paste(site, "_DOY", doy, sep = ""),
+         x ="Duration (s)",
+         y = "CO2 (ppm)")+
     theme_bw()+
     theme(plot.title = element_text(hjust = 0.5),
           panel.grid.major = element_blank(),
@@ -34,11 +34,6 @@ for(i in unique(asIRGA$DOY)){
   # Assign the figure with a site/date-specific name to the global environment.
   assign(paste(site, "_DOY", doy, sep = ""), CO2plot, envir = .GlobalEnv)
 }
-
-# Assemble final exploratory figures
-WILL <- WILL_DOY179 + WILL_DOY192 + WILL_DOY197 + WILL_DOY208 + patchwork::plot_layout()
-MEAD <- MEAD_DOY182 + MEAD_DOY195 + MEAD_DOY206 + patchwork::plot_layout()
-DRYAS <- DRYAS_DOY183 + DRYAS_DOY196 + DRYAS_DOY207 + patchwork::plot_layout()
 
 # Save PNGs
 ggsave("WILL_flux.png", plot = WILL, device = "png", path = here("figures/exploratory"),
