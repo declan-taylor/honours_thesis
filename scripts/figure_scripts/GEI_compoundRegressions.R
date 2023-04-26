@@ -8,18 +8,19 @@ ggsave("GEI_regressions.png",
           theme(legend.position = "none") +
           GEI.ER +
           theme(legend.position = "none") +
-          GEI.NEE) / 
+          GEI.NEE),
+       width = 5000, height = 3000, units = "px",
+       device = "png", path = here("figures"))
+
+ggsave("GEI_sites.png", 
         # Smaller boxes for site-specific regressions, without common y-axes.
         (GEI.GEP.sites + 
           theme(strip.text.x = element_text(face = "bold"),
-                legend.position = "none") +
-          GEI.ER.sites +
+                legend.position = "none")) /
+          (GEI.ER.sites +
+          theme(strip.text.x = element_text(face = "bold"))) /
+          (GEI.NEE.sites + 
           theme(strip.text.x = element_text(face = "bold"),
-                legend.position = "none") +
-          GEI.NEE.sites + 
-          theme(strip.text.x = element_text(face = "bold"))) + 
-          # Set heights of each row.
-          patchwork::plot_layout(heights = c(5, 2)),
-  
-  width = 5000, height = 3000, units = "px",
+                legend.position = "none")),
+  width = 3000, height = 3000, units = "px",
   device = "png", path = here("figures"))
