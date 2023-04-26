@@ -9,7 +9,8 @@ library(performance)
 conflicts_prefer(lmerTest::lmList(),
                  lmerTest::lmer(),
                  lmerTest::step(),
-                 performance::r2())
+                 performance::r2(),
+                 dplyr::filter())
 
 # Run `master_dataframe.R` first.
 # source(here("scripts/data_assembly/master_dataframe.R"))
@@ -97,8 +98,18 @@ flux_means <-
   separate(info, into = c("flux", "treatment", "site"), sep = "\\.") %>%
   mutate(flux.mean = as.numeric(flux.mean)) 
 
-
-# Difference in warming response across sites?-----------
+stdev <- GEP %>%
+  group_by(treatment) %>%
+  summarise(sd_NEE = sd(NEE_umol_s_m2, na.rm=TRUE),
+            sd_GEP = sd(GEP_umol_s_m2, na.rm=TRUE),
+            sd_ER = sd(ER_umol_s_m2, na.rm=TRUE))
+  
+stdev_site <- GEP %>%
+    group_by(treatment, site) %>%
+  summarise(sd_NEE = sd(NEE_umol_s_m2, na.rm=TRUE),
+            sd_GEP = sd(GEP_umol_s_m2, na.rm=TRUE),
+            sd_ER = sd(ER_umol_s_m2, na.rm=TRUE))
+Difference in warming response across sites?-----------
 SITE <- "MEAD"
 mean.C <- mean(pull(filter(NEE, treatment == "C")["NEE_umol_s_m2"]))
 mean.T <- mean(pull(filter(NEE, treatment == "T")["NEE_umol_s_m2"]))
